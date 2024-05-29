@@ -1,0 +1,7 @@
+name = "JuMLProjectGroupI"
+uuid = "ed3e4419-bdc7-4fcc-9bf9-c0bc1a5cb988"
+authors = ["Max Hiort <m.hiort@campus.tu-berlin.de>", "Konstantin Prieb <k.prieb@campus.tu-berlin.de>", "Fenja Schulz <f.schulz@campus.tu-berlin.de>", "Kirill Simonov <k.simonov@campus.tu-berlin.de>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
