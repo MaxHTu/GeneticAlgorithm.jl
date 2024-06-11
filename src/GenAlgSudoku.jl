@@ -10,6 +10,172 @@ begin
 	using StatsBase
 end
 
+# ╔═╡ 89067a16-4894-48f4-94c4-6a6ea9ffd3a8
+stack(([1,2],[2,3]))
+
+# ╔═╡ 7b522fb4-6cb9-4691-8dc0-ee14646e52ec
+begin
+	r1 = [0,4,8,2,0,0,0,0,1]
+	r2 = [1,0,0,3,8,4,7,2,6]
+	r3 = [3,0,0,7,0,1,9,4,8]
+	r4 = [0,7,2,6,4,5,1,8,0]
+	r5 = [8,0,0,0,0,2,4,0,0]
+	r6 = [0,0,0,0,0,0,0,0,7]
+	r7 = [0,8,4,0,0,0,3,0,0]
+	r8 = [6,0,0,4,1,0,0,0,2]
+	r9 = [0,0,3,0,0,0,0,7,4]
+	s = stack((r1,r2,r3,r4,r5,r6,r7,r8,r9))'
+	display(s)
+end
+
+# ╔═╡ 8fd50ab5-7a8f-4ec5-9f60-7605042a1a6b
+begin
+	n = 9*9
+	exp = [1,2,3,4,5,6,7,8,9]
+	k = 0
+	for x in range(1,size(s)[1])
+		for y in range(1,size(s)[2])
+			if s[x,y] == 0
+				k = k + 1
+			end
+		end
+	end
+	j = n - k
+end
+
+# ╔═╡ 19a6a2e9-cc5b-4a3d-98c8-974166d1d763
+sort([0,1,3,0,8,0,0,6,0])
+
+# ╔═╡ 6e8cab07-224f-4549-9dac-2c93d6e001e2
+sort(vec(s[1:3,1:3]))
+
+# ╔═╡ b69c1ad3-4685-447e-82e2-cb79dc327c7f
+for i in range(1,9)
+	println((i-1)%3)
+end
+
+# ╔═╡ 393fe9b5-e2a9-4888-bdb5-20a0bec99915
+typeof(1:3)
+
+# ╔═╡ f1e4e3b7-b9d4-4b38-a531-619261d407f6
+s[1:3,4:6]
+
+# ╔═╡ 013ae773-b4b4-40b5-bb18-6f3d3765a21b
+s
+
+# ╔═╡ 59ea4feb-7d88-475f-9676-fbc1e9f4cbe4
+for i in range(1,3)
+	for j in range(1,3)
+		println(i+(i-1)*2:i+(i-1)*2+2)
+		println(j+(j-1)*2:j+(j-1)*2+2)
+		println(sort(vec(s[i+(i-1)*2:i+(i-1)*2+2,j+(j-1)*2:j+(j-1)*2+2])))
+		println("==")
+	end
+end
+
+# ╔═╡ 1468b71e-ca12-465f-9f8e-63ca3d1eba56
+if 3 > 2 && 3 == 3
+	print(3)
+end
+
+# ╔═╡ 3e8f32fc-5c52-40f9-9ed3-9de2e8a4cde7
+s
+
+# ╔═╡ 59c9ddc3-23d0-485d-a018-cc17c58599f2
+s[1,:]
+
+# ╔═╡ 5faa44b5-74ac-454f-b947-cb8f1bd9adf3
+s[4,6]
+
+# ╔═╡ 9aba586a-22ba-4f0b-b972-a9a15132ccf4
+s[:,6]
+
+# ╔═╡ 98df84f8-7152-4313-b059-5e0115361b5a
+!(5 in [1,2,3,4])
+
+# ╔═╡ a968cc56-c56f-448e-8779-37e5caea1d62
+begin
+	a = 3
+	b = 6
+	println(a-(a-1)%3:a-(a-1)%3+2)
+	println(b-(b-1)%3:b-(b-1)%3+2)
+	9 in s[a-(a-1)%3:a-(a-1)%3+2,b-(b-1)%3:b-(b-1)%3+2]
+end
+
+# ╔═╡ c04fb421-8136-446d-a760-b63bca866d41
+1 in s[1,:]
+
+# ╔═╡ 9bd4695c-5f35-4bbc-90bf-cb87bdbd7dd6
+function checkNumber(number::Int, s, x, y)
+	s
+end
+
+# ╔═╡ b8aad640-c820-44f4-83e1-8c9b5983cd72
+rand(1:9)
+
+# ╔═╡ 7a5a4fc1-67f1-4785-83d5-5927511b68ef
+function initialState()
+	g = copy(s)
+	for x in range(1,9)
+		for y in range(1,9)
+			if s[x,y] == 0
+				g[x,y] = rand(1:9)
+			end
+		end
+	end
+	return g
+end
+
+# ╔═╡ a79d88ed-e030-479c-a2df-1c02291eae75
+function fitness(genome, sudoku)
+	f = 0
+	for x in range(1,9)
+		for y in range(1,9)
+			if genome[x,y] != 0 && sudoku[x,y] == 0
+				if !(genome[x,y] in sudoku[x,:]) && !(genome[x,y] in sudoku[:,y]) && !(genome[x,y] in sudoku[x-(x-1)%3:x-(x-1)%3+2,y-(y-1)%3:y-(y-1)%3+2])
+					f = f + 1
+				end
+			end
+		end
+	end
+	for i in range(1,9)
+		if sort(genome[i,:]) == exp
+			f = f + 10
+		end
+		if sort(genome[:,i]) == exp
+			f = f + 10
+		end
+	end
+	for i in range(1,3)
+		for j in range(1,3)
+			if sort(vec(genome[i+(i-1)*2:i+(i-1)*2+2,j+(j-1)*2:j+(j-1)*2+2])) == exp
+				f = f + 10
+			end
+		end
+	end
+	return f
+end
+
+# ╔═╡ d1949343-aa1a-4213-862b-263af01014ea
+gen = initialState()
+
+# ╔═╡ f652d070-491a-490d-b3a2-2d4e95a7ea9b
+s
+
+# ╔═╡ 0ee37181-e531-4c5f-b232-a9f3f470f15d
+sort(s[:,1]) == exp
+
+# ╔═╡ c6f88044-4f86-48c4-8867-af19bde3cbc7
+begin
+	f = k
+	for x in range(1,size(s)[1])
+		for y in range(1,size(s)[2])
+			# check if sudoku rules are satisfied else f = f - 1
+			if
+		end
+	end
+end
+
 # ╔═╡ 62db0ad4-de6b-4e06-b4d5-4842b9646de0
 begin
 	struct GA
@@ -34,56 +200,35 @@ mutable struct GAState{T,IT}
 end
 
 # ╔═╡ 502bb931-694e-4ceb-a91d-aa450edd2018
-begin
-# test data for the knapsack problem
-# (name, value, weight)
-# problem: maximize value while keeping weight under weight_limit
-	weight_limit=2000
-	things = [
-		("Laptop", 500, 2200),
-	    ("Headphones", 150, 160),
-	    ("Coffee Mug", 60, 350),
-	    ("Notepad", 40, 333),
-	    ("Water Bottle", 30, 192),
-		("Mints", 50, 25),
-		("Socks", 100, 38),
-	    ("Tissues", 150, 80),
-	    ("Phone", 500, 200),
-	    ("Baseball Cap", 100, 70),
-		("Shirt", 150, 75),
-		("A", 1000, 50),
-	    ("B", 105, 80),
-	    ("C", 200, 400),
-	    ("D", 130, 70)
-	]
-end
-
-# ╔═╡ 6bae0288-5c11-4e80-b7ac-abb9e60c5208
-begin
-s = 0
-for i in things
-s = s+i[2]
-end
-	s
-end
+things = [
+	("Laptop", 500, 2200),
+    ("Headphones", 150, 160),
+    ("Coffee Mug", 60, 350),
+    ("Notepad", 40, 333),
+    ("Water Bottle", 30, 192),
+	("Mints", 5, 25),
+	("Socks", 10, 38),
+    ("Tissues", 15, 80),
+    ("Phone", 500, 200),
+    ("Baseball Cap", 100, 70),
+	("Shirt", 5, 75),
+	("A", 10, 50),
+    ("B", 105, 80),
+    ("C", 200, 400),
+    ("D", 130, 70)
+]
 
 # ╔═╡ 11adf95a-5dcb-4b88-9f75-01e89be0f1a2
-# genreates a array of size size with values either 1 or 0
-# array should be of size of test_data
-# 1 (=> item is in backpack)
-# 0 (=> item not in backpack)
 function generate_genome(size::Int)  rand([0,1],size) end
 
 # ╔═╡ 75fcd718-e667-4c49-bcfb-53f0899c9322
-# generates the population: n genomes of size size
 function generate_population(size::Int, n::Int)  
-	return [generate_genome(size) for i in range(1, n)]
+	return [generate_genome(size) for i in range(0, n)]
 end
 
 # ╔═╡ ea1a9db9-bda5-4568-8b44-dcd5002dd897
-# computes the fitness of a genome
-# check all elements in genome, return sum of values of all elements in genome (if genome[x] != 0), if it exceedes the weight limit return 0
 function fitness(genome)
+	weight_limit=3000
 	weight = 0
 	value = 0
 	for (i, thing) in enumerate(things)
@@ -96,26 +241,29 @@ function fitness(genome)
 			end
 		end
 	end
-	return value
+	return weight
+end
+
+# ╔═╡ 13ea3d0c-ca1d-4dac-87af-c8c9fe3e5d56
+for i in range(1,10)
+	gen = initialState()
+	println(fitness(gen, s))
+	display(gen)
 end
 
 # ╔═╡ b194b8bf-27b4-4b2d-a5d5-b095e70f6739
-# select 2 genomes for the new generation from the current population, weighted by the fitness of the genomes
 function select_pair(population, fitness_func)
 	return sample(population, Weights([fitness_func(g) for g in population]), 2)
 end
 
 # ╔═╡ 14fa43cc-9c93-4b80-897d-fc35baffb7e7
-# crossover 2 genomes, by splitting them at a random index and then recombining them
 function crossover(ga, gb)
 	r = rand(1:length(ga))
 	return [ga[1:r]; gb[r+1:length(ga)]], [gb[1:r]; ga[r+1:length(ga)]]
 end
 
 # ╔═╡ 91c05490-ff44-46be-b019-05e00229f580
-# mutate a genome: switch 0 or 1 with a certain probability
-function mutation(genome, probability, num=1)
-	# num: # of elements to be switched
+function mutation(genome, probability, num=5)
 	for _ in range(1,num)
         index = rand(1:length(genome))
 		r = rand()
@@ -127,28 +275,22 @@ function mutation(genome, probability, num=1)
 end
 
 # ╔═╡ 8602187d-572e-468c-93d5-35eaeebff8b9
-# run the evolutionary algorithm
 function run()
-	# generate initial state
-	population = generate_population(15, 20)
+	population = generate_population(15,10)
 	for i in range(1,50)
-		# sort population by fitness score
 		population = sort(population, by=fitness, rev=true)
 
 		println(i)
 		println([fitness(g) for g in sort(population, by=fitness, rev=true)])
 		println(population)
 
-		# take 2 best fitted elements for the next generation
 		next_generation = population[1:2]
 
-		for j in range(1,trunc(Int, 20/2)-1)
-			# generate the rest of the next_generation
-			# using pair selection, crossover and mutation
+		for j in range(1,trunc(Int, 10/2)-1)
 			parents = select_pair(population, fitness)
 			a, b = crossover(parents[1], parents[2])
-			a = mutation(a, 0.01)
-			b = mutation(b, 0.01)
+			a = mutation(a, 0.4)
+			b = mutation(b, 0.4)
 			push!(next_generation, a)
 			push!(next_generation, b)
 		end
@@ -159,6 +301,29 @@ end
 
 # ╔═╡ fd14e605-e73e-4abd-b014-4ef4b1f499ae
 run()
+
+# ╔═╡ cffa94d5-af68-4c5c-bc84-05e60dec904b
+for i in range(1,10)
+	println(i)
+end
+
+# ╔═╡ a42a112d-7d55-4f49-a1b7-0244981731eb
+
+
+# ╔═╡ 33075ba3-ddc0-4c79-87d7-220e98384cba
+population = generate_population(15,10) 
+
+# ╔═╡ 47606be2-cd10-4d58-9b79-624d5013cac7
+push!(population[1:2], generate_genome(15))
+
+# ╔═╡ 7bcc5b26-4685-4382-b069-7fbfab5ac23b
+[fitness(g) for g in population]
+
+# ╔═╡ a37d0e3d-eef1-4aa2-bc21-312d94ae46ab
+[fitness(g) for g in sort(population, by=fitness, rev=true)]
+
+# ╔═╡ 0e5641df-d95c-4155-bd32-dfd952daa00b
+trunc(Int, 11/2)-1
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -386,10 +551,36 @@ version = "5.8.0+1"
 
 # ╔═╡ Cell order:
 # ╠═a97f817d-514a-4cb7-bdec-8de5d0a17730
+# ╠═89067a16-4894-48f4-94c4-6a6ea9ffd3a8
+# ╠═7b522fb4-6cb9-4691-8dc0-ee14646e52ec
+# ╠═8fd50ab5-7a8f-4ec5-9f60-7605042a1a6b
+# ╠═19a6a2e9-cc5b-4a3d-98c8-974166d1d763
+# ╠═6e8cab07-224f-4549-9dac-2c93d6e001e2
+# ╠═b69c1ad3-4685-447e-82e2-cb79dc327c7f
+# ╠═393fe9b5-e2a9-4888-bdb5-20a0bec99915
+# ╠═f1e4e3b7-b9d4-4b38-a531-619261d407f6
+# ╠═013ae773-b4b4-40b5-bb18-6f3d3765a21b
+# ╠═59ea4feb-7d88-475f-9676-fbc1e9f4cbe4
+# ╠═1468b71e-ca12-465f-9f8e-63ca3d1eba56
+# ╠═3e8f32fc-5c52-40f9-9ed3-9de2e8a4cde7
+# ╠═59c9ddc3-23d0-485d-a018-cc17c58599f2
+# ╠═5faa44b5-74ac-454f-b947-cb8f1bd9adf3
+# ╠═9aba586a-22ba-4f0b-b972-a9a15132ccf4
+# ╠═98df84f8-7152-4313-b059-5e0115361b5a
+# ╠═a968cc56-c56f-448e-8779-37e5caea1d62
+# ╠═c04fb421-8136-446d-a760-b63bca866d41
+# ╠═9bd4695c-5f35-4bbc-90bf-cb87bdbd7dd6
+# ╠═b8aad640-c820-44f4-83e1-8c9b5983cd72
+# ╠═7a5a4fc1-67f1-4785-83d5-5927511b68ef
+# ╠═a79d88ed-e030-479c-a2df-1c02291eae75
+# ╠═d1949343-aa1a-4213-862b-263af01014ea
+# ╠═f652d070-491a-490d-b3a2-2d4e95a7ea9b
+# ╠═13ea3d0c-ca1d-4dac-87af-c8c9fe3e5d56
+# ╠═0ee37181-e531-4c5f-b232-a9f3f470f15d
+# ╠═c6f88044-4f86-48c4-8867-af19bde3cbc7
 # ╠═62db0ad4-de6b-4e06-b4d5-4842b9646de0
 # ╠═b03f8f3b-08be-475a-8bb4-ec1aa5b12ee0
 # ╠═502bb931-694e-4ceb-a91d-aa450edd2018
-# ╠═6bae0288-5c11-4e80-b7ac-abb9e60c5208
 # ╠═11adf95a-5dcb-4b88-9f75-01e89be0f1a2
 # ╠═75fcd718-e667-4c49-bcfb-53f0899c9322
 # ╠═ea1a9db9-bda5-4568-8b44-dcd5002dd897
@@ -398,5 +589,12 @@ version = "5.8.0+1"
 # ╠═91c05490-ff44-46be-b019-05e00229f580
 # ╠═8602187d-572e-468c-93d5-35eaeebff8b9
 # ╠═fd14e605-e73e-4abd-b014-4ef4b1f499ae
+# ╠═cffa94d5-af68-4c5c-bc84-05e60dec904b
+# ╠═a42a112d-7d55-4f49-a1b7-0244981731eb
+# ╠═33075ba3-ddc0-4c79-87d7-220e98384cba
+# ╠═47606be2-cd10-4d58-9b79-624d5013cac7
+# ╠═7bcc5b26-4685-4382-b069-7fbfab5ac23b
+# ╠═a37d0e3d-eef1-4aa2-bc21-312d94ae46ab
+# ╠═0e5641df-d95c-4155-bd32-dfd952daa00b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
