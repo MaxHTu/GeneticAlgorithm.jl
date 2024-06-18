@@ -1,14 +1,14 @@
-using JuMLProjectGroupI
+using GeneticAlgorithm
 using Documenter
 
-DocMeta.setdocmeta!(JuMLProjectGroupI, :DocTestSetup, :(using JuMLProjectGroupI); recursive=true)
+DocMeta.setdocmeta!(GeneticAlgorithm, :DocTestSetup, :(using GeneticAlgorithm); recursive=true)
 
 makedocs(;
-    modules=[JuMLProjectGroupI],
+    modules=[GeneticAlgorithm],
     authors="Max Hiort <m.hiort@campus.tu-berlin.de>, Konstantin Prieb <k.prieb@campus.tu-berlin.de>, Fenja Schulz <f.schulz@campus.tu-berlin.de>, Kirill Simonov <k.simonov@campus.tu-berlin.de>",
-    sitename="JuMLProjectGroupI.jl",
+    sitename="GeneticAlgorithm.jl",
     format=Documenter.HTML(;
-        canonical="https://MaxHTu.github.io/JuMLProjectGroupI.jl",
+        canonical="https://MaxHTu.github.io/GeneticAlgorithm.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -18,6 +18,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/MaxHTu/JuMLProjectGroupI.jl",
+    repo="github.com/MaxHTu/GeneticAlgorithm.jl",
     devbranch="main",
 )
