@@ -1,5 +1,5 @@
-name = "JuMLProjectGroupI"
-uuid = "ed3e4419-bdc7-4fcc-9bf9-c0bc1a5cb988"
+name = "GeneticAlgorithm"
+uuid = "1d728517-7ff6-4cc0-a11d-05e2c12d719c"
 authors = ["Max Hiort <m.hiort@campus.tu-berlin.de>", "Konstantin Prieb <k.prieb@campus.tu-berlin.de>", "Fenja Schulz <f.schulz@campus.tu-berlin.de>", "Kirill Simonov <k.simonov@campus.tu-berlin.de>"]
 version = "1.0.0-DEV"
 

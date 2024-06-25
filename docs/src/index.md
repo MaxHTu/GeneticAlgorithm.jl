@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = JuMLProjectGroupI
+CurrentModule = GeneticAlgorithm
 ```
 
-# JuMLProjectGroupI
+# GeneticAlgorithm
 
-Documentation for [JuMLProjectGroupI](https://github.com/MaxHTu/JuMLProjectGroupI.jl).
+Documentation for [GeneticAlgorithm](https://github.com/MaxHTu/GeneticAlgorithm.jl).
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [JuMLProjectGroupI]
+Modules = [GeneticAlgorithm]
 ```

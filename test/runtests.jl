@@ -1,6 +1,6 @@
-using JuMLProjectGroupI
+using GeneticAlgorithm
 using Test
 
-@testset "JuMLProjectGroupI.jl" begin
-    # Write your tests here.
+@testset "GeneticAlgorithm.jl" begin
+    include("test_evaluation.jl")
 end
