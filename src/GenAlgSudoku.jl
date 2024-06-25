@@ -15,15 +15,33 @@ stack(([1,2],[2,3]))
 
 # ╔═╡ 7b522fb4-6cb9-4691-8dc0-ee14646e52ec
 begin
-	r1 = [0,4,8,2,0,0,0,0,1]
-	r2 = [1,0,0,3,8,4,7,2,6]
-	r3 = [3,0,0,7,0,1,9,4,8]
-	r4 = [0,7,2,6,4,5,1,8,0]
-	r5 = [8,0,0,0,0,2,4,0,0]
-	r6 = [0,0,0,0,0,0,0,0,7]
-	r7 = [0,8,4,0,0,0,3,0,0]
-	r8 = [6,0,0,4,1,0,0,0,2]
-	r9 = [0,0,3,0,0,0,0,7,4]
+	#r1 = [0,4,8,2,0,0,0,0,1]
+	#r2 = [1,0,0,3,8,4,7,2,6]
+	#r3 = [3,0,0,7,0,1,9,4,8]
+	#r4 = [0,7,2,6,4,5,1,8,0]
+	#r5 = [8,0,0,0,0,2,4,0,0]
+	#r6 = [0,0,0,0,0,0,0,0,7]
+	#r7 = [0,8,4,0,0,0,3,0,0]
+	#r8 = [6,0,0,4,1,0,0,0,2]
+	#r9 = [0,0,3,0,0,0,0,7,4]
+	# 0 3 0 0 7 0 0 5 0 
+	# 5 0 0 1 0 6 0 0 9
+	# 0 0 1 0 0 0 4 0 0
+	# 0 9 0 0 5 0 0 6 0
+	# 6 0 0 4 0 2 0 0 7
+	# 0 4 0 0 1 0 0 3 0
+	# 0 0 2 0 0 0 8 0 0
+	# 9 0 0 3 0 5 0 0 2
+	# 0 1 0 0 2 0 0 7 0
+	r1 = [0,3,0,0,7,0,0,5,0]
+	r2 = [5,0,0,1,0,6,0,0,9]
+	r3 = [0,0,1,0,0,0,4,0,0]
+	r4 = [0,9,0,0,5,0,0,6,0]
+	r5 = [6,0,0,4,0,2,0,0,7]
+	r6 = [0,4,0,0,1,0,0,3,0]
+	r7 = [0,0,2,0,0,0,8,0,0]
+	r8 = [9,0,0,3,0,5,0,0,2]
+	r9 = [0,1,0,0,2,0,0,7,0]
 	s = stack((r1,r2,r3,r4,r5,r6,r7,r8,r9))'
 	display(s)
 end
@@ -62,6 +80,9 @@ s[1:3,4:6]
 
 # ╔═╡ 013ae773-b4b4-40b5-bb18-6f3d3765a21b
 s
+
+# ╔═╡ 344d27a8-03d8-42c7-bad6-3707f4461cb9
+s[1,:]
 
 # ╔═╡ 59ea4feb-7d88-475f-9676-fbc1e9f4cbe4
 for i in range(1,3)
@@ -102,9 +123,6 @@ begin
 	9 in s[a-(a-1)%3:a-(a-1)%3+2,b-(b-1)%3:b-(b-1)%3+2]
 end
 
-# ╔═╡ c04fb421-8136-446d-a760-b63bca866d41
-1 in s[1,:]
-
 # ╔═╡ 9bd4695c-5f35-4bbc-90bf-cb87bdbd7dd6
 function checkNumber(number::Int, s, x, y)
 	s
@@ -113,27 +131,80 @@ end
 # ╔═╡ b8aad640-c820-44f4-83e1-8c9b5983cd72
 rand(1:9)
 
+# ╔═╡ b4dc6b42-0a29-4e49-92be-0ce4c7d67690
+rand([1,3,6])
+
+# ╔═╡ e1ece593-28f7-415b-a12d-c2b0247f64b5
+Ref(s[:,1])
+
+# ╔═╡ d7f9f9b1-2454-4b48-ab17-b9f149d4f60e
+s
+
+# ╔═╡ a2c22370-8257-4181-9e3c-4c3a44ade287
+s[1,5]
+
 # ╔═╡ 7a5a4fc1-67f1-4785-83d5-5927511b68ef
 function initialState()
 	g = copy(s)
 	for x in range(1,9)
 		for y in range(1,9)
 			if s[x,y] == 0
-				g[x,y] = rand(1:9)
+				t = exp[exp .∉ Ref(s[x,:])]
+				t[t .∉ Ref(s[:,y])]
+				g[x,y] = rand(t)
 			end
 		end
 	end
 	return g
 end
 
+# ╔═╡ 987d54a7-143e-424e-9377-850037a1b34f
+tt = initialState()
+
+# ╔═╡ 97895b93-f3ae-4838-8526-a05dcb0a974f
+function checkChangeNum(s, x, y)
+	if sort(s[x,:]) == exp
+		return false
+	end
+	if sort(tt[:,y]) == exp
+		return false
+	end
+	if sort(vec(tt[x-(x-1)%3:x-(x-1)%3+2,y-(y-1)%3:y-(y-1)%3+2])) == exp
+		return false
+	end
+	return true
+end
+
+# ╔═╡ e91dcfae-a382-4de9-aba7-e3326ba662c4
+begin
+	q = initialState()
+	display(q)
+	q[1,1] = 0
+	display(q)
+	aaa = q[1,:]
+	bbb = q[:,1]
+	t = exp[exp .∉ Ref(aaa)]
+	t[t .∉ Ref(bbb)]
+end
+
+# ╔═╡ 76dfba82-8c46-47b5-b9c8-f4ef51685a82
+display(initialState())
+
+# ╔═╡ 211fc0de-d630-4ce7-a70a-2b7793e4a6f7
+s
+
+# ╔═╡ ab048e87-7b50-4266-83bc-f1804f1658fd
+initialState()
+
 # ╔═╡ a79d88ed-e030-479c-a2df-1c02291eae75
-function fitness(genome, sudoku)
+function fitness(genome)
+	sudoku = copy(s)
 	f = 0
 	for x in range(1,9)
 		for y in range(1,9)
 			if genome[x,y] != 0 && sudoku[x,y] == 0
 				if !(genome[x,y] in sudoku[x,:]) && !(genome[x,y] in sudoku[:,y]) && !(genome[x,y] in sudoku[x-(x-1)%3:x-(x-1)%3+2,y-(y-1)%3:y-(y-1)%3+2])
-					f = f + 1
+					f = f + 2
 				end
 			end
 		end
@@ -162,93 +233,92 @@ gen = initialState()
 # ╔═╡ f652d070-491a-490d-b3a2-2d4e95a7ea9b
 s
 
-# ╔═╡ 0ee37181-e531-4c5f-b232-a9f3f470f15d
-sort(s[:,1]) == exp
+# ╔═╡ d763f374-404b-47ff-b03b-063d40bca976
+s
+
+# ╔═╡ 8a03c216-ab6c-4be1-833d-6a9560281fb6
+begin
+	r = rand(1:9)
+	sx1 = initialState()
+	sx2 = initialState()
+	display([sx1[1:r,:]; sx2[r+1:end,:]])
+	display([sx2[1:r,:]; sx1[r+1:end,:]])
+end
 
 # ╔═╡ c6f88044-4f86-48c4-8867-af19bde3cbc7
-begin
-	f = k
-	for x in range(1,size(s)[1])
-		for y in range(1,size(s)[2])
-			# check if sudoku rules are satisfied else f = f - 1
-			if
+function crossover_sudoku(s_1, s_2)
+	sudoku = copy(s)
+	mode = rand(1:3)
+	s1 = copy(s_1)
+	s2 = copy(s_2)
+	if mode == 1
+		# swap random numbers
+		for x in range(1,9)
+			for y in range(1,9)
+				if sudoku[x,y] == 0
+					r = rand(1:2)
+					if r == 1
+						v = s2[x,y]
+						s2[x,y] = s1[x,y]
+						s1[x,y] = v
+					end
+				end
+			end
 		end
+		return s1, s2
+	end
+	if mode == 2
+		# swap rows
+		r = rand(1:9)
+		return [s1[1:r,:]; s2[r+1:end,:]], [s2[1:r,:]; s1[r+1:end,:]]
+	end
+	if mode == 3
+		# swap cols
+		r = rand(1:9)
+		return [s1[:,1:r] s2[:,r+1:end]], [s2[:,1:r] s1[:,r+1:end]]
+	end
+	if mode == 4
+		# swap cubes
+		r = rand(1:9)
+		return s1, s2
 	end
 end
 
-# ╔═╡ 62db0ad4-de6b-4e06-b4d5-4842b9646de0
-begin
-	struct GA
-	    populationSize::Int
-	    crossoverRate::Float64
-	    mutationRate::Float64
-	    ɛ::Real
-	    selection
-	    crossover
-	    mutation
-	end
-	
-end
+# ╔═╡ 8d4d7a81-29a2-4bf0-bf37-1b9d0dbba846
+rand()
 
-# ╔═╡ b03f8f3b-08be-475a-8bb4-ec1aa5b12ee0
-mutable struct GAState{T,IT}
-    N::Int
-    eliteSize::Int
-    fitness::T
-    fitpop::Vector{T}
-    fittest::IT
-end
+# ╔═╡ 1a8b668d-8108-4b1e-aca9-a184895bab4e
+s
 
-# ╔═╡ 502bb931-694e-4ceb-a91d-aa450edd2018
-things = [
-	("Laptop", 500, 2200),
-    ("Headphones", 150, 160),
-    ("Coffee Mug", 60, 350),
-    ("Notepad", 40, 333),
-    ("Water Bottle", 30, 192),
-	("Mints", 5, 25),
-	("Socks", 10, 38),
-    ("Tissues", 15, 80),
-    ("Phone", 500, 200),
-    ("Baseball Cap", 100, 70),
-	("Shirt", 5, 75),
-	("A", 10, 50),
-    ("B", 105, 80),
-    ("C", 200, 400),
-    ("D", 130, 70)
-]
-
-# ╔═╡ 11adf95a-5dcb-4b88-9f75-01e89be0f1a2
-function generate_genome(size::Int)  rand([0,1],size) end
-
-# ╔═╡ 75fcd718-e667-4c49-bcfb-53f0899c9322
-function generate_population(size::Int, n::Int)  
-	return [generate_genome(size) for i in range(0, n)]
-end
-
-# ╔═╡ ea1a9db9-bda5-4568-8b44-dcd5002dd897
-function fitness(genome)
-	weight_limit=3000
-	weight = 0
-	value = 0
-	for (i, thing) in enumerate(things)
-		if genome[i] != 0
-			weight += thing[3]
-			value += thing[2]
-
-			if weight > weight_limit
-				return 0
+# ╔═╡ 202a0cd6-84b6-491e-8521-ad35e69b2d60
+function mutation(o, probability=0.2)
+	sudoku = copy(s)
+	for x in range(1,9)
+		for y in range(1,9)
+			if sudoku[x,y] == 0 && checkChangeNum(o, x, y) 
+				# println("possible change")
+				r = rand()
+				if r < probability
+					# println("change")
+					t = exp[exp .∉ Ref(s[x,:])]
+					t[t .∉ Ref(s[:,y])]
+					o[x,y] = rand(t)
+					# println("change at ", x, y)
+				end
 			end
 		end
 	end
-	return weight
+	return o
 end
 
-# ╔═╡ 13ea3d0c-ca1d-4dac-87af-c8c9fe3e5d56
-for i in range(1,10)
-	gen = initialState()
-	println(fitness(gen, s))
-	display(gen)
+# ╔═╡ b58c410f-fcea-471e-b94e-caf919290366
+begin
+	xx1 = initialState()
+	display(xx1)
+	println(fitness(xx1))
+	xx1 = mutation(xx1, 0.2)
+	display(xx1)
+	println(fitness(xx1))
 end
 
 # ╔═╡ b194b8bf-27b4-4b2d-a5d5-b095e70f6739
@@ -256,74 +326,44 @@ function select_pair(population, fitness_func)
 	return sample(population, Weights([fitness_func(g) for g in population]), 2)
 end
 
-# ╔═╡ 14fa43cc-9c93-4b80-897d-fc35baffb7e7
-function crossover(ga, gb)
-	r = rand(1:length(ga))
-	return [ga[1:r]; gb[r+1:length(ga)]], [gb[1:r]; ga[r+1:length(ga)]]
-end
-
-# ╔═╡ 91c05490-ff44-46be-b019-05e00229f580
-function mutation(genome, probability, num=5)
-	for _ in range(1,num)
-        index = rand(1:length(genome))
-		r = rand()
-		if r < probability 
-			genome[index] = abs(genome[index] - 1)
-		end
-	end
-	return genome
+# ╔═╡ 14488ff5-5d7f-471b-8b2f-c6fa56d52076
+function generate_population(n::Int)
+	return [initialState() for i in range(1, n)]
 end
 
 # ╔═╡ 8602187d-572e-468c-93d5-35eaeebff8b9
 function run()
-	population = generate_population(15,10)
-	for i in range(1,50)
+	size = 100
+	population = generate_population(size)
+	for i in range(1,500)
 		population = sort(population, by=fitness, rev=true)
 
 		println(i)
-		println([fitness(g) for g in sort(population, by=fitness, rev=true)])
-		println(population)
+		flush(stdout)
+		println([fitness(g) for g in population][1])
+		flush(stdout)
 
 		next_generation = population[1:2]
 
-		for j in range(1,trunc(Int, 10/2)-1)
+		for j in range(1,trunc(Int, size/2)-1)
 			parents = select_pair(population, fitness)
-			a, b = crossover(parents[1], parents[2])
-			a = mutation(a, 0.4)
-			b = mutation(b, 0.4)
+			a, b = crossover_sudoku(parents[1], parents[2])
+			a = mutation(a, 0.1)
+			b = mutation(b, 0.1)
 			push!(next_generation, a)
 			push!(next_generation, b)
 		end
 
 		population = next_generation
 	end
+	display(population[1])
 end
 
-# ╔═╡ fd14e605-e73e-4abd-b014-4ef4b1f499ae
+# ╔═╡ 408ea093-ebfa-469c-86f5-4206f6ab2d86
 run()
 
-# ╔═╡ cffa94d5-af68-4c5c-bc84-05e60dec904b
-for i in range(1,10)
-	println(i)
-end
-
-# ╔═╡ a42a112d-7d55-4f49-a1b7-0244981731eb
-
-
-# ╔═╡ 33075ba3-ddc0-4c79-87d7-220e98384cba
-population = generate_population(15,10) 
-
-# ╔═╡ 47606be2-cd10-4d58-9b79-624d5013cac7
-push!(population[1:2], generate_genome(15))
-
-# ╔═╡ 7bcc5b26-4685-4382-b069-7fbfab5ac23b
-[fitness(g) for g in population]
-
-# ╔═╡ a37d0e3d-eef1-4aa2-bc21-312d94ae46ab
-[fitness(g) for g in sort(population, by=fitness, rev=true)]
-
-# ╔═╡ 0e5641df-d95c-4155-bd32-dfd952daa00b
-trunc(Int, 11/2)-1
+# ╔═╡ e0cf0b80-12b7-472c-ac22-ede830ab5726
+2*k + 10*9*3
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -560,6 +600,7 @@ version = "5.8.0+1"
 # ╠═393fe9b5-e2a9-4888-bdb5-20a0bec99915
 # ╠═f1e4e3b7-b9d4-4b38-a531-619261d407f6
 # ╠═013ae773-b4b4-40b5-bb18-6f3d3765a21b
+# ╠═344d27a8-03d8-42c7-bad6-3707f4461cb9
 # ╠═59ea4feb-7d88-475f-9676-fbc1e9f4cbe4
 # ╠═1468b71e-ca12-465f-9f8e-63ca3d1eba56
 # ╠═3e8f32fc-5c52-40f9-9ed3-9de2e8a4cde7
@@ -568,33 +609,33 @@ version = "5.8.0+1"
 # ╠═9aba586a-22ba-4f0b-b972-a9a15132ccf4
 # ╠═98df84f8-7152-4313-b059-5e0115361b5a
 # ╠═a968cc56-c56f-448e-8779-37e5caea1d62
-# ╠═c04fb421-8136-446d-a760-b63bca866d41
 # ╠═9bd4695c-5f35-4bbc-90bf-cb87bdbd7dd6
 # ╠═b8aad640-c820-44f4-83e1-8c9b5983cd72
+# ╠═b4dc6b42-0a29-4e49-92be-0ce4c7d67690
+# ╠═e1ece593-28f7-415b-a12d-c2b0247f64b5
+# ╠═d7f9f9b1-2454-4b48-ab17-b9f149d4f60e
+# ╠═a2c22370-8257-4181-9e3c-4c3a44ade287
+# ╠═987d54a7-143e-424e-9377-850037a1b34f
+# ╠═97895b93-f3ae-4838-8526-a05dcb0a974f
+# ╠═e91dcfae-a382-4de9-aba7-e3326ba662c4
 # ╠═7a5a4fc1-67f1-4785-83d5-5927511b68ef
+# ╠═76dfba82-8c46-47b5-b9c8-f4ef51685a82
+# ╠═211fc0de-d630-4ce7-a70a-2b7793e4a6f7
+# ╠═ab048e87-7b50-4266-83bc-f1804f1658fd
 # ╠═a79d88ed-e030-479c-a2df-1c02291eae75
 # ╠═d1949343-aa1a-4213-862b-263af01014ea
 # ╠═f652d070-491a-490d-b3a2-2d4e95a7ea9b
-# ╠═13ea3d0c-ca1d-4dac-87af-c8c9fe3e5d56
-# ╠═0ee37181-e531-4c5f-b232-a9f3f470f15d
+# ╠═d763f374-404b-47ff-b03b-063d40bca976
+# ╠═8a03c216-ab6c-4be1-833d-6a9560281fb6
 # ╠═c6f88044-4f86-48c4-8867-af19bde3cbc7
-# ╠═62db0ad4-de6b-4e06-b4d5-4842b9646de0
-# ╠═b03f8f3b-08be-475a-8bb4-ec1aa5b12ee0
-# ╠═502bb931-694e-4ceb-a91d-aa450edd2018
-# ╠═11adf95a-5dcb-4b88-9f75-01e89be0f1a2
-# ╠═75fcd718-e667-4c49-bcfb-53f0899c9322
-# ╠═ea1a9db9-bda5-4568-8b44-dcd5002dd897
+# ╠═8d4d7a81-29a2-4bf0-bf37-1b9d0dbba846
+# ╠═b58c410f-fcea-471e-b94e-caf919290366
+# ╠═1a8b668d-8108-4b1e-aca9-a184895bab4e
+# ╠═202a0cd6-84b6-491e-8521-ad35e69b2d60
 # ╠═b194b8bf-27b4-4b2d-a5d5-b095e70f6739
-# ╠═14fa43cc-9c93-4b80-897d-fc35baffb7e7
-# ╠═91c05490-ff44-46be-b019-05e00229f580
+# ╠═14488ff5-5d7f-471b-8b2f-c6fa56d52076
 # ╠═8602187d-572e-468c-93d5-35eaeebff8b9
-# ╠═fd14e605-e73e-4abd-b014-4ef4b1f499ae
-# ╠═cffa94d5-af68-4c5c-bc84-05e60dec904b
-# ╠═a42a112d-7d55-4f49-a1b7-0244981731eb
-# ╠═33075ba3-ddc0-4c79-87d7-220e98384cba
-# ╠═47606be2-cd10-4d58-9b79-624d5013cac7
-# ╠═7bcc5b26-4685-4382-b069-7fbfab5ac23b
-# ╠═a37d0e3d-eef1-4aa2-bc21-312d94ae46ab
-# ╠═0e5641df-d95c-4155-bd32-dfd952daa00b
+# ╠═408ea093-ebfa-469c-86f5-4206f6ab2d86
+# ╠═e0cf0b80-12b7-472c-ac22-ede830ab5726
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
