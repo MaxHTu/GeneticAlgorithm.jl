@@ -112,3 +112,16 @@ function griewank(x)
     term2 = prod(cos.(x ./ sqrt.(1:length(x))))
     return term1 - term2 + 1
 end
+
+"""
+bs_fit
+
+Evaluates the fitness of an individual.
+This function should be problem-specific and should be provided by the user.
+"""
+function bs_fit(ind::Individual)::Float64
+    # Example fitness function for binary strings
+    return sum(ind.genes)
+end
+
+export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, bs_fit
