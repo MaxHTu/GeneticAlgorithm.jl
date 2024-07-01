@@ -1,5 +1,7 @@
 module GeneticAlgorithm
 
+    using Random
+
     include("evaluation.jl")
     include("crossover.jl")
     include("selection.jl")

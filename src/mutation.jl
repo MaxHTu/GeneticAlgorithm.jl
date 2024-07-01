@@ -5,7 +5,7 @@
 """
     bit_string_mutation(gene)
 """
-function bit_string_mutation(gene)
+function bit_string_mutation(gene::Vector{Bool})
     prob = 1/length(gene)
     for i in range(1,length(gene))
         if rand() < prob
@@ -18,7 +18,7 @@ end
 """
     bit_string_mutation(gene, prob)
 """
-function bit_string_mutation(gene, prob)
+function bit_string_mutation(gene, prob::Float64)
     for i in range(1,length(gene))
         if rand() < prob
             gene[i] = !gene[i]
@@ -27,7 +27,7 @@ function bit_string_mutation(gene, prob)
     return gene
 end
 
-function real_value_mutation(gene, mutation_prob::Float64)
+function real_value_mutation(gene::Vector{Float64}, mutation_prob::Float64)
     for i in range(1,length(gene))
         if rand() < mutation_prob
             g = gene[i] + rand(-100:100)
