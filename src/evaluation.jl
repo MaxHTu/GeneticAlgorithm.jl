@@ -112,3 +112,21 @@ function griewank(x)
     term2 = prod(cos.(x ./ sqrt.(1:length(x))))
     return term1 - term2 + 1
 end
+
+"""
+    binarystring(x)
+
+Compute the fitness of a binary string unit.
+
+# Arguments
+- `x`: Input vector.
+
+# Returns
+- The digit sum of input vector.
+
+"""
+function binarystring(x)
+    return sum(x)
+end
+
+export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, binarystring
