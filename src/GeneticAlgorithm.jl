@@ -62,8 +62,8 @@ module GeneticAlgorithm
                     child1, child2 = parent1, parent2
                 end
 
-                mutation!(child1, unitReal, mutRate)
-                mutation!(child2, unitReal, mutRate)
+                child1 = mutation(child1, unitReal, mutRate)
+                child2 = mutation(child2, unitReal, mutRate)
                 push!(newPop, child1)
                 push!(newPop, child2)
             end
