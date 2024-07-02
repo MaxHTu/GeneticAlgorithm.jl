@@ -6,8 +6,8 @@ using GeneticAlgorithm
         child1, child2 = GeneticAlgorithm.crossover([false,true,true,false],[true,true,true,true])
         @test (child1, child2) == ([false,true,true,true],[true,true,true,false])
 
-        child1, child2 = GeneticAlgorithm.crossover([false,false,true,true,false,false,false],[false,true,false,true,false,true,true])
-        @test (child1, child2) == ([false,true,false,true,false,true,true],[false,false,true,true,false,false,false])
+        child1, child2 = GeneticAlgorithm.crossover([false,true,true,false,false,true,true,false],[true,false,true,false,true,false,true])
+        @test (child1, child2) == ([false,false,true,false,true,false,true],[true,true,true,false,false,true,true,false])
 
         child1, child2 = GeneticAlgorithm.crossover([0.07,0.35,0.7,0.63],[0.91,0.19,0.77,0.78])
         @test (child1, child2) == ([0.07,0.35,0.77,0.78],[0.91,0.19,0.7,0.63])
