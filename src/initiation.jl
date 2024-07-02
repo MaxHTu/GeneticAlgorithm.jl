@@ -1,20 +1,19 @@
 """
-createUnit
+    initPop(popSize::Int, unitReal::Bool, unitLen::Int)
 
-Creates an individual unit of the population.
-This function should be problem-specific and should be provided by the user.
+Initialize the population of units. Each unit is a vector of Boolean or Real values.
+
+# Arguments
+- `popSize` Size of population.
+- `unitReal` Binary or real unit representation.
+- `unitLen` Length of a unit vector.
+
+# Returns
+- Full vector of units with random Boolean or Real values.
+
 """
-function createUnit(unitLen::Int)::Individual
-    return BinaryIndividual(rand(Bool, unitLen))
+function initPop(popSize::Int, unitReal::Bool, unitLen::Int)
+    return [rand(unitReal ? Float64 : Bool, unitLen) for _ in 1:popSize]
 end
 
-"""
-createPop
-
-Creates the population, which is a vector of [numPop] individuals.
-"""
-function createPop(numPop::Int, unitLen::Int)::Vector{Individual}
-    return [createUnit(unitLen) for i in 1:numPop]
-end
-
-export BinaryIndividual, createUnit, createPop
+export initPop

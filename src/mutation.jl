@@ -1,15 +1,20 @@
 """
-mutation!
+    mutation!(unit::Vector, unitReal::Bool, mutRate::Float64)
 
-Mutates an individual by changing its genes depending on a mutation rate [mutRate].
-TODO: This function should be problem-specific and should be provided by the user.
+Mutate an unit by changing its genes depending on its type and a mutation rate.
+
+# Arguments
+- `unit`: Unit to be mutated.
+- `unitReal`: Type of unit, Real or Binary.
+- `mutRate`: Mutation rate.
+
 """
-function mutation!(ind::Individual, mutRate::Float64)
-    for i in 1:length(ind.genes)
+function mutation!(unit::Vector, unitReal::Bool, mutRate::Float64)
+    for i in eachindex(unit)
         if rand() < mutRate
-            ind.genes[i] = !ind.genes[i]
+            unit[i] = unitReal ? rand(Float64) : !unit[i]
         end
     end
 end
 
-export mutation
+export mutation!

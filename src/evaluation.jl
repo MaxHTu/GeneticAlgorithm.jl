@@ -114,14 +114,19 @@ function griewank(x)
 end
 
 """
-bs_fit
+    binarystring(x)
 
-Evaluates the fitness of an individual.
-This function should be problem-specific and should be provided by the user.
+Compute the fitness of a binary string unit.
+
+# Arguments
+- `x`: Input vector.
+
+# Returns
+- The digit sum of input vector.
+
 """
-function bs_fit(ind::Individual)::Float64
-    # Example fitness function for binary strings
-    return sum(ind.genes)
+function binarystring(x)
+    return sum(x)
 end
 
-export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, bs_fit
+export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, binarystring
