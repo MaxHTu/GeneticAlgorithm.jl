@@ -85,8 +85,8 @@ function update_state!(
         #call crossover function
         a, b = crossover(parents[1], parents[2])
         #mutation step
-        a = real_value_mutation(a,0.2)
-        b = real_value_mutation(b,0.2)
+        a = mutation(a,0.2)
+        b = mutation(b,0.2)
         push!(next_generation, a)
         push!(next_generation, b)
     end

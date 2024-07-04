@@ -262,7 +262,7 @@ function run()
 	population = generate_population(size)
 	fittest = 0
 	generation = 1
-	for i in range(1,500)
+	for i in range(1,1000)
 		if fittest == (2*k + 10*9*3)
 			println("found solution")
 			break
