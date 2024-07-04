@@ -39,4 +39,10 @@ using Test
         @test isapprox(griewank([1, 1, 1, 1]), 0.6989, atol=1e-4)
         @test isapprox(griewank([5, -5, 5, -5]), 1.228, atol=1e-4)
     end
+
+    @testset "binarystring" begin
+        @test binarystring([0, 0, 0]) == 0
+        @test binarystring([1, 0, 0, 0]) == 1
+        @test binarystring([0, 0, 1, 1, 0, 0, 0]) == 2
+    end
 end
