@@ -1,5 +1,5 @@
 # GeneticAlgorithm
-A Julia package [genetic algorithms](http://en.wikipedia.org/wiki/Genetic_algorithm).
+A Julia package for [genetic algorithms](http://en.wikipedia.org/wiki/Genetic_algorithm).
 
 | **Documentation** | **Build Status** |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
