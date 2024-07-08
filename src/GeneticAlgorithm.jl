@@ -82,6 +82,10 @@ module GeneticAlgorithm
         return state
     end
 
-    export genAlgo
+    export 
+        genAlgo,
+        # Population Initiation
+        binary_initial_state,
+        float_initial_state
 
 end

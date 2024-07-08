@@ -87,24 +87,6 @@ mutable struct GA <: AbstractOptimizer
     )
 end
 
-function generate_binary_genome(size::Int)
-    return rand(Bool,size)
-end
-
-
-function binary_initial_state(gene_size::Int, population_size::Int)
-    return [generate_binary_genome(gene_size) for i in range(1, population_size)]
-end
-
-function float_initial_state(population_size::Int)
-    pop = Vector{Vector{Float64}}(undef, population_size)
-     for i in range(1,population_size)
-        pop[i] = Float64[0.,0.] + rand(-100:100,2)
-    end
-    return pop
-end
-
-
 function update_state!(
     ga,
     fitness::Function,
