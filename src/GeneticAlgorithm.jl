@@ -86,6 +86,18 @@ module GeneticAlgorithm
         genAlgo,
         # Population Initiation
         binary_initial_state,
-        float_initial_state
+        float_initial_state,
+        # Evaluation
+        sphere,
+        rosenbrock,
+        quartic,
+        schwefel,
+        rastrigin,
+        griewank,
+        binarystring,
+        # Selection
+        default_select_pair,
+        selection,
+        tournamentSelection
 
 end

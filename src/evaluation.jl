@@ -128,5 +128,3 @@ Compute the fitness of a binary string unit.
 function binarystring(x)
     return sum(x)
 end
-
-export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, binarystring
