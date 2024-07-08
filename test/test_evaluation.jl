@@ -1,6 +1,6 @@
 using GeneticAlgorithm
 using Test
-
+using Random
 
 @testset "Evaluation Functions" begin
     @testset "sphere" begin
@@ -17,9 +17,12 @@ using Test
     end
 
     @testset "quartic" begin
-        @test abs(quartic([0.0, 0.0]) - 0.0) < 1.0
-        @test quartic([1.0, 1.0]) > 1.0
-        @test quartic([-1.0, -1.0]) > 1.0
+        Random.seed!(1)
+        @test abs(quartic([0.0, 0.0]) - 0.0) ≈ 0.0705 atol=1e-4
+        Random.seed!(1)
+        @test quartic([1.0, 1.0]) == 2.929416861046102
+        Random.seed!(6)
+        @test quartic([-1.0, -1.0]) == 1.0242114225812102
     end
 
     @testset "schwefel" begin
