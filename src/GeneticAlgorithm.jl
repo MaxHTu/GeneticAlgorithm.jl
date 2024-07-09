@@ -98,7 +98,7 @@ module GeneticAlgorithm
         # Selection
         default_select_pair,
         weighted_select_pair,
-        selection,
-        tournamentSelection
+        fitness_selection,
+        tournament_selection
 
 end
