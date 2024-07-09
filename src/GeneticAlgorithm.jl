@@ -99,6 +99,10 @@ module GeneticAlgorithm
         default_select_pair,
         weighted_select_pair,
         fitness_selection,
-        tournament_selection
+        tournament_selection,
+        # Crossover
+        single_point_crossover,
+        k_point_crossover,
+        uniform_crossover
 
 end

@@ -3,20 +3,42 @@ using GeneticAlgorithm
 
 @testset "Crossover" begin
     @testset "crossover" begin
-        child1, child2 = GeneticAlgorithm.crossover([false,true,true,false],[true,true,true,true])
-        rng = Random.seed!(1)
-        @test (child1, child2) == ([false,true,true,true],[true,true,true,false])
+        rng = Random.seed!(3)
+        child1, child2 = GeneticAlgorithm.single_point_crossover([false,false,false,false],[true,true,true,true])
+        @test (child1, child2) == ([false,false,true,true],[true,true,false,false])
 
-        child1, child2 = GeneticAlgorithm.crossover([false,true,true,false,false,true,true,false],[true,false,true,false,true,false,true])
-        rng = Random.seed!(6)
-        @test (child1, child2) == ([false,false,true,false,true,false,true],[true,true,true,false,false,true,true,false])
+        rng = Random.seed!(9)
+        child1, child2 = GeneticAlgorithm.single_point_crossover([1.0,4.0,-8.0,16.0],[3.0,-9.0,18.0,6.0])
+        @test (child1, child2) == ([1.0,-9.0,18.0,6.0],[3.0,4.0,-8.0,16.0])
 
-        child1, child2 = GeneticAlgorithm.crossover([0.07,0.35,0.7,0.63],[0.91,0.19,0.77,0.78])
-        rng = Random.seed!(6)
-        @test (child1, child2) == ([0.07,0.35,0.7,0.78],[0.91,0.19,0.77,0.63])
+        rng = Random.seed!(3)
+        child1, child2 = GeneticAlgorithm.k_point_crossover([false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true], 3)
+        @test (child1, child2) == ([false,false,true,false,false,false,false,false],[true,true,false,true,true,true,true,true])
 
-        child1, child2 = GeneticAlgorithm.crossover([0.66,0.28,0.63,0.38,0.94,0.49,0.89,0.47,0.24,0.32],[0.06,0.92,0.33,0.83,0.70,0.11,0.36,0.46,0.95,0.51])
-        rng = Random.seed!(1)
-        @test (child1, child2) == ([0.66,0.28,0.63,0.38,0.94,0.49,0.89,0.47,0.95,0.51],[0.06,0.92,0.33,0.83,0.70,0.11,0.36,0.46,0.24,0.32])
-    end
+        rng = Random.seed!(3)
+        child1, child2 = GeneticAlgorithm.k_point_crossover([false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true], 5)
+        @test (child1, child2) == ([false,false,true,false,true,true,true,false],[true,true,false,true,false,false,false,true])
+
+        rng = Random.seed!(25)
+        child1, child2 = GeneticAlgorithm.k_point_crossover([1.0,4.0,-8.0,16.0,2.0,5.0,-4.0,7.0],[3.0,-9.0,18.0,6.0,1.0,9.0,-1.0,-4.0],3)
+        @test (child1, child2) == ([1.0, 4.0, 18.0, 6.0, 2.0, 5.0, -4.0, 7.0], [3.0, -9.0, -8.0, 16.0, 1.0, 9.0, -1.0, -4.0])
+
+        rng = Random.seed!(32)
+        child1, child2 = GeneticAlgorithm.k_point_crossover([1.0,4.0,-8.0,16.0,2.0,5.0,-4.0,7.0],[3.0,-9.0,18.0,6.0,1.0,9.0,-1.0,-4.0],5)
+        @test (child1, child2) == ([1.0, -9.0, -8.0, 6.0, 1.0, 9.0, -4.0, 7.0], [3.0, 4.0, 18.0, 16.0, 2.0, 5.0, -1.0, -4.0])
+
+        rng = Random.seed!(100)
+        c1, c2 = GeneticAlgorithm.single_point_crossover([false,false,false,false],[true,true,true,true])
+        rng = Random.seed!(100)
+        child1, child2 = GeneticAlgorithm.k_point_crossover([false,false,false,false],[true,true,true,true], 2)
+        @test (c1, c2) == (child1, child2)
+
+        rng = Random.seed!(99)
+        child1, child2 = GeneticAlgorithm.uniform_crossover([false,false,false,false],[true,true,true,true])
+        @test (child1, child2) == ([false,false,false,true],[true,true,true,false])
+
+        rng = Random.seed!(7)
+        child1, child2 = GeneticAlgorithm.uniform_crossover([false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true])
+        @test (child1, child2) == ([false,true,true,false,true,false,true,true],[true,false,false,true,false,true,false,false])
+        end
 end

@@ -10,9 +10,6 @@ begin
 	using StatsBase
 end
 
-# ╔═╡ 89067a16-4894-48f4-94c4-6a6ea9ffd3a8
-stack(([1,2],[2,3]))
-
 # ╔═╡ 7b522fb4-6cb9-4691-8dc0-ee14646e52ec
 begin
 	r1 = [0,4,8,2,0,0,0,0,1]
@@ -235,7 +232,7 @@ end
 
 # ╔═╡ b194b8bf-27b4-4b2d-a5d5-b095e70f6739
 function select_pair(population, fitness_func)
-	return sample(population, 2)
+	return sample(population, 2, replace=false)
 	#return sample(population, Weights([fitness_func(g) for g in population]), 2)
 end
 
@@ -258,7 +255,8 @@ end
 
 # ╔═╡ 8602187d-572e-468c-93d5-35eaeebff8b9
 function run()
-	size = 100
+	size = 25
+	0
 	population = generate_population(size)
 	fittest = 0
 	generation = 1
@@ -283,8 +281,8 @@ function run()
 		for j in range(1,trunc(Int, size/2)-1)
 			parents = select_pair(population, fitness)
 			a, b = crossover_sudoku(parents[1], parents[2])
-			a = mutation(a, 0.2+(i-generation)*0.005)
-			b = mutation(b, 0.2+(i-generation)*0.005)
+			a = mutation(a, 0.2+(i-generation)*0.05)
+			b = mutation(b, 0.2+(i-generation)*0.05)
 			push!(next_generation, a)
 			push!(next_generation, b)
 		end
@@ -529,7 +527,6 @@ version = "5.8.0+1"
 
 # ╔═╡ Cell order:
 # ╠═a97f817d-514a-4cb7-bdec-8de5d0a17730
-# ╠═89067a16-4894-48f4-94c4-6a6ea9ffd3a8
 # ╠═7b522fb4-6cb9-4691-8dc0-ee14646e52ec
 # ╠═8fd50ab5-7a8f-4ec5-9f60-7605042a1a6b
 # ╠═97895b93-f3ae-4838-8526-a05dcb0a974f
