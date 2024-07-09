@@ -97,6 +97,7 @@ module GeneticAlgorithm
         binarystring,
         # Selection
         default_select_pair,
+        weighted_select_pair,
         selection,
         tournamentSelection
 

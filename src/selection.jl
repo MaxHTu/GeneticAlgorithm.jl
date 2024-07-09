@@ -1,22 +1,34 @@
 """
-    default_select_pair(population::Vector, fitness::Vector, weighted::Bool)
+    default_select_pair(population::Vector)
 
-Select 2 random genes from population. If weighted is true, weight the selection by the fitness of the genes
+Select 2 random genes from population.
 
 # Arguments
 - `population`: Population vector.
-- `fitness`: Vector of fitness values.
-- `weighted`: indicates if selection should be weighted by fitness
 
 # Returns
 - Two selected genes
 
 """
-function default_select_pair(population::Vector, fitness_arr::Vector, weighted=false::Bool)
-    if weighted
-        return sample(population, Weights(fitness_arr), 2, replace=false)
-    end
+function default_select_pair(population::Vector)
 	return sample(population, 2, replace=false)
+end
+
+"""
+weighted_select_pair(population::Vector, fitness::Vector)
+
+Select 2 random genes from population weight by the fitness of the genes
+
+# Arguments
+- `population`: Population vector.
+- `fitness`: Vector of fitness values.
+
+# Returns
+- Two selected genes
+
+"""
+function weighted_select_pair(population::Vector, fitness_arr::Vector)
+    return sample(population, Weights(fitness_arr), 2, replace=false)
 end
 
 # TODO: change selection to return 2 genes
