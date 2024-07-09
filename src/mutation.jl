@@ -1,11 +1,15 @@
-#ToDO
-# https://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
-
-
 """
-    bit_string_mutation(gene)
+    mutation!(gene::Vector{Bool})
+
+Implements a bit string mutation that flips a single bit in a gene with the probability 1/length(gene)
+
+# Arguments
+- `gene`: Gene to be mutated.
+
+# Returns
+- A mutated gene.
 """
-function bit_string_mutation(gene::Vector{Bool})
+function mutation!(gene::Vector{Bool})
     prob = 1/length(gene)
     for i in range(1,length(gene))
         if rand() < prob
@@ -16,9 +20,18 @@ function bit_string_mutation(gene::Vector{Bool})
 end
 
 """
-    bit_string_mutation(gene, prob)
+    mutation!(gene::Vector{Bool}, prob::Float64)
+
+Implements a bit string mutation that flips a single bit in a gene with the probability prob
+
+# Arguments
+- `gene`: Gene to be mutated.
+- `prob`: Probability with which a single bit is flipped
+
+# Returns
+- A mutated gene.
 """
-function bit_string_mutation(gene, prob::Float64)
+function mutation!(gene::Vector{Bool}, prob::Float64)
     for i in range(1,length(gene))
         if rand() < prob
             gene[i] = !gene[i]
@@ -27,37 +40,26 @@ function bit_string_mutation(gene, prob::Float64)
     return gene
 end
 
-function real_value_mutation(gene::Vector{Float64}, mutation_prob::Float64)
-    for i in range(1,length(gene))
+"""
+    mutation!(gene::Vector{Real}, prob::Real)
+
+Implements a bit string mutation that selects a random number for a single bit in a gene with the probability prob
+
+# Arguments
+- `gene`: Gene to be mutated.
+- `prob`: Probability with which a single bit is flipped
+
+# Returns
+- A mutated gene.
+"""
+function mutation!(gene::Vector{<:Real}, mutation_prob::Real, range::Vector{<:Real})
+    for i in 1:length(gene)
         if rand() < mutation_prob
-            g = gene[i] + rand(-100:100)
-            if g > 100 g = g -100 end
-            if g < -100 g = g + 100 end
+            g = gene[i] + rand(range[1]:range[2])
+            if g > range[2] g = g - range[2] end
+            if g < range[1] g = g + range[2] end
             gene[i] = g
         end
     end 
     return gene
-end
-
-"""
-    mutation!(unit::Vector, unitReal::Bool, mutRate::Float64)
-
-Mutate an unit by changing its genes depending on its type and a mutation rate.
-
-# Arguments
-- `unit`: Unit to be mutated.
-- `unitReal`: Type of unit, Real or Binary.
-- `mutRate`: Mutation rate.
-
-# Returns
-- A mutated unit.
-"""
-function mutation(unit::Vector, unitReal::Bool, mutRate::Float64)
-    for i in eachindex(unit)
-        if rand() < mutRate
-            unit[i] = unitReal ? rand(Float64) : !unit[i]
-        end
-    end
-
-    return unit
 end

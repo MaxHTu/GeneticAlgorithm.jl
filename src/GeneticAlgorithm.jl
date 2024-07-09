@@ -103,6 +103,8 @@ module GeneticAlgorithm
         # Crossover
         single_point_crossover,
         k_point_crossover,
-        uniform_crossover
+        uniform_crossover,
+        # Mutation
+        mutation!
 
 end
