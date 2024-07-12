@@ -1,5 +1,6 @@
 """
-    mutation!(gene::Vector{Bool})
+    mutation!(unit::Vector{AbstractFloat}, mutRate::Real)
+    mutation!(unit::Vector{Bool}, mutRate::Real)
 
 Implements a bit string mutation that flips a single bit in a gene with the probability 1/length(gene)
 
