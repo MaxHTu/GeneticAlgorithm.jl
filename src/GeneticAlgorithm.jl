@@ -26,23 +26,28 @@ module GeneticAlgorithm
     # Arguments
     - `popSize`: Size of population.
     - `unitReal`: Binary or real unit representation.
-    - `unitLen`: Length of a unit vector.
+    - `unitLen` --> `unitRange`: Length of a unit vector. [1]: Skalar, [2,3]:Matrix, [3]:Vektor
     - `fitnessFunc`: Fitness function.
     - `genNum`: Number of generations.
     - `crossRate`: Crossover rate.
     - `mutRate`: Mutation rate.
 
+    - Genomrange: endliches Intervall
+    - Datenobjekt mit den initialen Klardaten als Datengrundlage (braucht an zb manchmal für die fitness funktion)
+    - k beste Kandiaten als ganze Zahl oder Anteil
+    - crossover funktion übergeben
+
     """
     function genAlgo(
         popSize::Int,
         unitReal::Bool,
-        unitLen::Int,
+        unitShape::Vector{Int},
         fitnessFunc::Function,
         genNum::Int,
         crossRate::Float64,
         mutRate::Float64
     )
-        population = initPop(popSize, unitReal, unitLen)
+        population = initPop(popSize, unitReal, unitShape)
         fitness = [fitnessFunc(unit) for unit in population]
 
         bestUnit = population[argmax(fitness)]
