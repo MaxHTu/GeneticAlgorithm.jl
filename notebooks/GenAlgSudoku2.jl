@@ -63,12 +63,6 @@ function checkChangeNum(s, x, y)
 	return true
 end
 
-# ╔═╡ 172cd367-a25c-4a09-b66f-84e31bbddd74
-display(s)
-
-# ╔═╡ eae049fd-ba8b-4933-8a87-1c28246528f7
-exp[exp .∉ Ref(s[1,:])]
-
 # ╔═╡ 7a5a4fc1-67f1-4785-83d5-5927511b68ef
 # initial state based on rows so each row is already completed
 function initialState()
@@ -77,23 +71,16 @@ function initialState()
 		for y in range(1,9)
 			if s[x,y] == 0
 				t = exp[exp .∉ Ref(g[x,:])]
-				g[x,y] = rand(t)
+				t2 = t[t .∉ Ref(g[:,y])]
+				if t2 != []
+					g[x,y] = rand(t2)
+				else
+					g[x,y] = rand(t)
+				end
 			end
 		end
 	end
 	return g
-end
-
-# ╔═╡ e91dcfae-a382-4de9-aba7-e3326ba662c4
-begin
-	q = initialState()
-	display(q)
-	q[1,1] = 0
-	display(q)
-	aaa = q[1,:]
-	bbb = q[:,1]
-	t = exp[exp .∉ Ref(aaa)]
-	t[t .∉ Ref(bbb)]
 end
 
 # ╔═╡ a79d88ed-e030-479c-a2df-1c02291eae75
@@ -129,12 +116,11 @@ function fitness(genome)
 	return f
 end
 
-# ╔═╡ d1949343-aa1a-4213-862b-263af01014ea
-begin
-	test = initialState()
-	display(test)
-	fitness(test)
-end
+# ╔═╡ 4f2766f3-e85c-4fa6-8143-af805338aedd
+s[1,:]
+
+# ╔═╡ 9a00a34c-a595-487b-89b7-0f2ad6041117
+s
 
 # ╔═╡ c6f88044-4f86-48c4-8867-af19bde3cbc7
 function crossover_sudoku(s_1, s_2)
@@ -142,20 +128,36 @@ function crossover_sudoku(s_1, s_2)
 	s2 = copy(s_2)
 	# swap rows
 	r = rand(1:9)
+	#println(r)
+	#display([s1[1:r,:]; s2[r+1:end,:]])
+	#display([s2[1:r,:]; s1[r+1:end,:]])
 	return [s1[1:r,:]; s2[r+1:end,:]], [s2[1:r,:]; s1[r+1:end,:]]
 end
 
-# ╔═╡ 1a8b668d-8108-4b1e-aca9-a184895bab4e
-s
+# ╔═╡ 05773f11-1834-4698-81eb-de49f0c9133f
+begin
+	a = initialState()
+	b = initialState()
+	display(a)
+	display(b)
+	crossover_sudoku(a,b)
+end
 
-# ╔═╡ 6f84f66f-5c94-4dcd-a846-2d2fb1db5fb1
-rand(1:9)
+# ╔═╡ 830ab889-7558-4297-b661-0b3778c53134
+rand(0:1)
 
-# ╔═╡ a5b1a117-35dc-4317-bf46-df6245911159
-s
-
-# ╔═╡ fe94d27c-e416-49e0-81ad-8e774c29af7f
-
+# ╔═╡ c95e8097-ebaa-4b64-9bc4-5a9e69ccfe4f
+function uniform_crossover(s_1,s_2)
+	s1 = copy(s_1)
+	s2 = copy(s_2)
+	for i in range(1,9)
+		if rand(0:1) == 1
+			s1[i,:] = s_2[i,:]
+			s2[i,:] = s_1[i,:]
+		end
+	end
+	return s1,s2
+end
 
 # ╔═╡ aae3ae65-03bd-4b74-b744-a368b1fe16a4
 begin
@@ -171,24 +173,6 @@ begin
 	i2 = rand(eachindex(pot))
 	c2 = pot[i2]
 end
-
-# ╔═╡ a4555cc5-cc39-4173-8f33-dd91a47cb58b
-s[1,:][s[1,:] .== 0]
-
-# ╔═╡ 932860c6-f93a-4611-bfc0-699860acee33
-begin
-	r = rand(1:9)
-	println(r)
-	while sort(s[r,:])[3] != 0
-		r = rand(1:9)
-		println(r)
-	end
-	println(r)
-	println("end")
-end
-
-# ╔═╡ 4d5a1111-3fda-484e-a3cf-8b73d989a7bb
-s
 
 # ╔═╡ 202a0cd6-84b6-491e-8521-ad35e69b2d60
 function mutation(o, probability=0.2)
@@ -220,16 +204,6 @@ function mutation(o, probability=0.2)
 	return o
 end
 
-# ╔═╡ b58c410f-fcea-471e-b94e-caf919290366
-begin
-	xx1 = initialState()
-	display(xx1)
-	println(fitness(xx1))
-	xx1 = mutation(xx1, 0.2)
-	display(xx1)
-	println(fitness(xx1))
-end
-
 # ╔═╡ b194b8bf-27b4-4b2d-a5d5-b095e70f6739
 function select_pair(population, fitness_func)
 	return sample(population, 2, replace=false)
@@ -241,22 +215,9 @@ function generate_population(n::Int)
 	return [initialState() for i in range(1, n)]
 end
 
-# ╔═╡ 007a56e7-287c-4248-80ef-f83ef9af8a74
-begin
-	pop = generate_population(10)
-	for i in range(1,10)
-		println(fitness(pop[i]))
-		display(pop[i])
-	end
-end
-
-# ╔═╡ a9b97706-c7d7-4427-b957-99bb0f11b142
-(324-300)*(0.005)
-
 # ╔═╡ 8602187d-572e-468c-93d5-35eaeebff8b9
 function run()
-	size = 25
-	0
+	size = 200
 	population = generate_population(size)
 	fittest = 0
 	generation = 1
@@ -280,9 +241,9 @@ function run()
 
 		for j in range(1,trunc(Int, size/2)-1)
 			parents = select_pair(population, fitness)
-			a, b = crossover_sudoku(parents[1], parents[2])
-			a = mutation(a, 0.2+(i-generation)*0.05)
-			b = mutation(b, 0.2+(i-generation)*0.05)
+			a, b = uniform_crossover(parents[1], parents[2])
+			a = mutation(a, 0.7+(i-generation)*0.05)
+			b = mutation(b, 0.7+(i-generation)*0.05)
 			push!(next_generation, a)
 			push!(next_generation, b)
 		end
@@ -299,7 +260,7 @@ run()
 
 
 # ╔═╡ e0cf0b80-12b7-472c-ac22-ede830ab5726
-2*k + 10*9*3
+2*k + 10*9*1
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -410,9 +371,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "18144f3e9cbe9b15b070288eef858f71b291ce37"
+git-tree-sha1 = "a2d09619db4e765091ee5c6ffe8872849de0feea"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.27"
+version = "0.3.28"
 
     [deps.LogExpFunctions.extensions]
     LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
@@ -527,30 +488,21 @@ version = "5.8.0+1"
 
 # ╔═╡ Cell order:
 # ╠═a97f817d-514a-4cb7-bdec-8de5d0a17730
+# ╠═97895b93-f3ae-4838-8526-a05dcb0a974f
 # ╠═7b522fb4-6cb9-4691-8dc0-ee14646e52ec
 # ╠═8fd50ab5-7a8f-4ec5-9f60-7605042a1a6b
-# ╠═97895b93-f3ae-4838-8526-a05dcb0a974f
-# ╠═e91dcfae-a382-4de9-aba7-e3326ba662c4
-# ╠═172cd367-a25c-4a09-b66f-84e31bbddd74
-# ╠═eae049fd-ba8b-4933-8a87-1c28246528f7
 # ╠═7a5a4fc1-67f1-4785-83d5-5927511b68ef
 # ╠═a79d88ed-e030-479c-a2df-1c02291eae75
-# ╠═d1949343-aa1a-4213-862b-263af01014ea
+# ╠═4f2766f3-e85c-4fa6-8143-af805338aedd
+# ╠═9a00a34c-a595-487b-89b7-0f2ad6041117
+# ╠═05773f11-1834-4698-81eb-de49f0c9133f
 # ╠═c6f88044-4f86-48c4-8867-af19bde3cbc7
-# ╠═b58c410f-fcea-471e-b94e-caf919290366
-# ╠═1a8b668d-8108-4b1e-aca9-a184895bab4e
-# ╠═6f84f66f-5c94-4dcd-a846-2d2fb1db5fb1
-# ╠═a5b1a117-35dc-4317-bf46-df6245911159
-# ╠═fe94d27c-e416-49e0-81ad-8e774c29af7f
+# ╠═830ab889-7558-4297-b661-0b3778c53134
+# ╠═c95e8097-ebaa-4b64-9bc4-5a9e69ccfe4f
 # ╠═aae3ae65-03bd-4b74-b744-a368b1fe16a4
-# ╠═a4555cc5-cc39-4173-8f33-dd91a47cb58b
-# ╠═932860c6-f93a-4611-bfc0-699860acee33
-# ╠═4d5a1111-3fda-484e-a3cf-8b73d989a7bb
 # ╠═202a0cd6-84b6-491e-8521-ad35e69b2d60
 # ╠═b194b8bf-27b4-4b2d-a5d5-b095e70f6739
 # ╠═14488ff5-5d7f-471b-8b2f-c6fa56d52076
-# ╠═007a56e7-287c-4248-80ef-f83ef9af8a74
-# ╠═a9b97706-c7d7-4427-b957-99bb0f11b142
 # ╠═8602187d-572e-468c-93d5-35eaeebff8b9
 # ╠═408ea093-ebfa-469c-86f5-4206f6ab2d86
 # ╠═45ca464f-b4ae-4366-9f92-4b2910a6673a
