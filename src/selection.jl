@@ -11,13 +11,13 @@ Select one unit with higher fitness out of two randomly chosen unit from the pop
 - The unit with better fitness value.
 
 """
-function selection(population::Vector, fitness::Vector)
+function selection(population::AbstractVector, fitness::Vector)
     unit1, unit2 = rand(1:length(population), 2)
     return (fitness[unit1] > fitness[unit2]) ? population[unit1] : population[unit2]
 end
 
 """
-    tournamentSelection(population::Vector, fitness::Vector, tournamentSize::Int)
+    tournamentSelection(population::Vector, fitness::Vector, tournamentSize::Integer)
 
 Select one unit with higher fitness over several tournament rounds with randomly chosen groups of unit from the population .
 
@@ -30,7 +30,7 @@ Select one unit with higher fitness over several tournament rounds with randomly
 - The unit with better fitness value.
 
 """
-function tournamentSelection(population::Vector, fitness::Vector, tournamentSize::Int)
+function tournamentSelection(population::AbstractVector, fitness::Vector, tournamentSize::Integer)
     choice = []
 
     for _ in 1:length(population)
@@ -41,5 +41,3 @@ function tournamentSelection(population::Vector, fitness::Vector, tournamentSize
 
     return choice
 end
-
-export selection, tournamentSelection

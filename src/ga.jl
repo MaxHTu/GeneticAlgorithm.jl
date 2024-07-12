@@ -1,43 +1,37 @@
 #TODO: Decide which parameters to keep.
-mutable struct GAState{V1, V2, V3}
-    popSize::Int
-    population::V1
-    fitness::V2
-    generation::Int
-    bestUnit::V3
-    bestFitness::Real
-    crossRate::Float64
-    mutRate::Float64
-    # selection::Function
-    # crossover::Function
-    # mutation::Function
+struct GAState
+    popSize::Integer
+    unitType::Type
+    population::AbstractVector
+    fitness::AbstractVector
+    generation::Integer
+    crossRate::Real
+    mutRate::Real
+    selection::Function
+    crossover::Function
+    mutation::Function
 
-    # GAState(
-    #     popSize::Int,
-    #     population::V1,
-    #     fitness::V2,
-    #     generation::Int,
-    #     bestUnit::V3,
-    #     bestFitness::Real,
-    #     crossRate::Float64,
-    #     mutRate::Float64,
-    #     selection::Function = selection,
-    #     crossover::Function = crossover,
-    #     mutation::Function = mutation!
-    # ) where{V1<:AbstractVector{<:AbstractVector}, V2<:AbstractVector, V3<:AbstractVector} = 
-    #     new{V1<:AbstractVector{<:AbstractVector}, V2<:AbstractVector, V3<:AbstractVector}(
-    #     popSize,
-    #     population,
-    #     fitness,
-    #     generation,
-    #     bestUnit,
-    #     bestFitness,
-    #     crossRate,
-    #     mutRate,
-    #     selection,
-    #     crossover,
-    #     mutation
-    # )
+    GAState(;
+        popSize::Integer = 50,
+        unitType::Type = Real,
+        population::AbstractVector,
+        fitness::AbstractVector,
+        generation::Integer = 50,
+        crossRate::Real = 0.25,
+        mutRate::Real = 0.1,
+        selection::Function = selection,
+        crossover::Function = crossover,
+        mutation::Function = mutation!
+    ) = new(
+        popSize,
+        unitType,
+        population,
+        fitness,
+        generation,
+        crossRate,
+        mutRate,
+        selection,
+        crossover,
+        mutation
+    )
 end
-
-export GAState
