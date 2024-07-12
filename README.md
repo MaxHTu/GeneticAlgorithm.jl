@@ -17,7 +17,7 @@ add https://github.com/MaxHTu/GeneticAlgorithm.jl
 ```
 
 For using the package in a Pluto notebook run:
-```
+```julia
 using Pkg;
 Pkg.add(url="https://github.com/MaxHTu/GeneticAlgorithm.jl")
 using GeneticAlgorithm
