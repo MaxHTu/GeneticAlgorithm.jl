@@ -7,13 +7,16 @@ module GeneticAlgorithm
     include("mutation.jl")
     include("ga.jl")
 
-    export 
+    export
+        # ga.jl
+        geneticAlgorithm,
         genAlgo,
         solveRosenbrock,
-        # Population Initiation
-        binary_initial_state,
-        float_initial_state,
-        # Evaluation
+
+        # initiation.jl
+        initPop,
+
+        # evaluation.jl
         sphere,
         rosenbrock,
         quartic,
@@ -21,16 +24,19 @@ module GeneticAlgorithm
         rastrigin,
         griewank,
         binarystring,
-        # Selection
+
+        # selection.jl
         default_select_pair,
         weighted_select_pair,
         fitness_selection,
         tournament_selection,
-        # Crossover
+
+        # crossover.jl
         single_point_crossover,
         k_point_crossover,
         uniform_crossover,
-        # Mutation
+
+        # mutation.jl
         mutation!
 
 end
