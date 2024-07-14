@@ -31,17 +31,17 @@ be replaced by a fitter one.
 
 """
 function geneticAlgorithm(
+    fitnessFunc::Function,
     popSize::Integer,
     unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}},
     unitShape::AbstractVector{<:Integer},
-    fitnessFunc::Function,
     genNum::Integer,
-    crossRate::Real,
-    mutRate::Real,
-    nextGenAmt::Number,
     selectionFunc::Function,
     crossoverFunc::Function,
-    mutationFunc::Function
+    mutationFunc::Function,
+    crossRate::Real,
+    mutRate::Real,
+    nextGenAmt::Real
 )
     population = initPop(popSize, unitShape, unitValues)
 
@@ -81,28 +81,13 @@ function geneticAlgorithm(
     return sort(population, by=fitnessFunc) 
 end
 
-function genAlgo(
-    fitnessFunc::typeof(rosenbrock);
-    popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
-    unitShape::AbstractVector{<:Integer} = [2],
-    genNum::Integer = 50,
-    selection::Function = selection,
-    crossover::Function = crossover,
-    mutation::Function = mutation!,
-    crossRate::Real = 0.2,
-    mutRate::Real = 0.01
-)
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
-end
-
 function solveRosenbrock(
-        ;
-        a::Integer=1,
-        b::Integer=100,
-        popSize::Integer = 500,
-        fitnessFunc::Function = rosenbrock,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
+    ;
+    a::Integer=1,
+    b::Integer=100,
+    popSize::Integer = 500,
+    fitnessFunc::Function = rosenbrock,
+    unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 10,
     crossRate::Real = 0.25,
@@ -110,9 +95,11 @@ function solveRosenbrock(
     nextGenAmt::Number = 4,
     selectionFunc::Function = GeneticAlgorithm.weighted_selection,
     crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
-    mutationFunc::Function = GeneticAlgorithm.mutation!)
+    mutationFunc::Function = GeneticAlgorithm.mutation!
+)
 
-        return geneticAlgorithm(popSize,unitType,unitLen,x -> GeneticAlgorithm.rosenbrock(x,a=a,b=b),genNum,crossRate,mutRate,nextGenAmt,selectionFunc,crossoverFunc,mutationFunc)
+    return geneticAlgorithm(popSize,unitValues,unitShape,x -> GeneticAlgorithm.rosenbrock(x,a=a,b=b),genNum,crossRate,mutRate,nextGenAmt,selectionFunc,crossoverFunc,mutationFunc)
+
 end
 
 
@@ -155,9 +142,26 @@ function genAlgo(
     crossover::Function,
     mutation::Function,
     crossRate::Real,
-    mutRate::Real
+    mutRate::Real,
+    nextGenAmt::Real
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
+end
+
+function genAlgo(
+    fitnessFunc::Function;
+    popSize::Integer = 50,
+    unitValues::Union{Type,Vector{Float64}} = Float64,
+    unitShape::AbstractVector{<:Integer} = [2],
+    genNum::Integer = 50,
+    selection::Function = weighted_selection,
+    crossover::Function = single_point_crossover,
+    mutation::Function = mutation!,
+    crossRate::Real = 0.2,
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
+)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -166,13 +170,14 @@ function genAlgo(
     unitValues::Union{Type,Vector{Float64}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -181,13 +186,14 @@ function genAlgo(
     unitValues::Union{Type,Vector{Float64}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.25,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -196,13 +202,14 @@ function genAlgo(
     unitValues::Union{Type,Vector{Float64}} = Float64,
     unitShape::Vector{Int} = [2],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -211,13 +218,14 @@ function genAlgo(
     unitValues::Union{Type,Vector{Float64}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -226,13 +234,14 @@ function genAlgo(
     unitValues::Union{Type,Vector{Integer}} = Integer,
     unitShape::AbstractVector{<:Integer} = [4],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 
 function genAlgo(
@@ -241,41 +250,12 @@ function genAlgo(
     unitValues::Type = Bool,
     unitShape::AbstractVector{<:Integer} = [50],
     genNum::Integer = 50,
-    selection::Function = selection,
+    selection::Function = default_selection,
     crossover::Function = crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
-    mutRate::Real = 0.01
+    mutRate::Real = 0.01,
+    nextGenAmt::Real = 2
 )
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
-end
-
-function genAlgo(
-    fitnessFunc::typeof(rosenbrock);
-    popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
-    unitShape::AbstractVector{<:Integer} = [2],
-    genNum::Integer = 50,
-    selection::Function = selection,
-    crossover::Function = crossover,
-    mutation::Function = mutation!,
-    crossRate::Real = 0.2,
-    mutRate::Real = 0.01
-)
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
-end
-
-function genAlgo(
-    fitnessFunc::typeof(rosenbrock);
-    popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
-    unitShape::AbstractVector{<:Integer} = [2],
-    genNum::Integer = 50,
-    selection::Function = selection,
-    crossover::Function = crossover,
-    mutation::Function = mutation!,
-    crossRate::Real = 0.2,
-    mutRate::Real = 0.01
-)
-    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate)
+    return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
