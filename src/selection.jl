@@ -16,7 +16,7 @@ function default_selection(population::Vector, num::Integer)
 end
 
 """
-weighted_select_pair(population::Vector, fitness::Vector, num::Integer)
+weighted_selection(population::Vector, fitness::Vector, num::Integer)
 
 Select num random genes from population weight by the fitness of the genes
 

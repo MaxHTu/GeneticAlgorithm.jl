@@ -53,12 +53,12 @@ Implements a bit string mutation that selects a random number for a single bit i
 # Returns
 - A mutated gene.
 """
-function mutation!(gene::Vector{<:Real}, mutation_prob::Real, range::Vector{<:Real})
+function mutation!(gene::Vector{<:Real}, mutation_prob::Real, range::UnitRange{Float64})
     for i in 1:length(gene)
         if rand() < mutation_prob
-            g = gene[i] + rand(range[1]:range[2])
-            if g > range[2] g = g - range[2] end
-            if g < range[1] g = g + range[2] end
+            g = gene[i] + rand(range)
+            if g > range[end] g = g - range[end] end
+            if g < range[1] g = g + range[end] end
             gene[i] = g
         end
     end 
