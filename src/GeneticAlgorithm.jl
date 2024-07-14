@@ -26,7 +26,8 @@ module GeneticAlgorithm
     # Arguments
     - `popSize`: Size of population.
     - `unitType`: Type of unit.
-    - `unitLen`: Length of a unit vector.
+    - `unitShape`: Dimension of a genome, e.g. [1] = Scalar, [3] = xyz-Vector, [3,3] = 3x3 Matrix
+    - `values`: Range of possible genome states, e.g. [0,1], [1,2,3,4,5], [1.0,1.3,10.9], ...
     - `fitnessFunc`: Fitness function.
     - `genNum`: Number of generations.
     - `crossRate`: Crossover rate.
@@ -36,19 +37,14 @@ module GeneticAlgorithm
     function genAlgo(
         popSize::Integer,
         unitType::Type,
-        unitLen::Integer,
+        unitShape::Vector{Int},
+        values::Union{Vector{Bool},Vector{Int},Vector{Float64}},
         fitnessFunc::Function,
         genNum::Integer,
         crossRate::Real,
         mutRate::Real
     )
-        if unitType == Bool
-            population = initBinPop(popSize, unitLen)
-            #newPop = Vector{AbstractVector{Bool}}(undef, popSize)
-        elseif unitType <: AbstractFloat
-            population = initFloatPop(popSize, unitLen)
-            #newPop = Vector{AbstractVector{Float64}}(undef, popSize)
-        end
+        population = initPop(popSize, unitShape, values)
 
         fitness = [fitnessFunc(unit) for unit in population]
 
@@ -89,8 +85,7 @@ module GeneticAlgorithm
     export 
         genAlgo,
         # Population Initiation
-        binary_initial_state,
-        float_initial_state,
+        initPop,
         # Evaluation
         sphere,
         rosenbrock,
@@ -99,6 +94,7 @@ module GeneticAlgorithm
         rastrigin,
         griewank,
         binarystring,
+        knapsack,
         # Selection
         default_select_pair,
         weighted_select_pair,
