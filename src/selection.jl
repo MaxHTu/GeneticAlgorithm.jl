@@ -1,5 +1,5 @@
 """
-    default_select_pair(population::Vector, num::Integer)
+    default_selection(population::Vector, num::Integer)
 
 Select num random genes from population.
 
