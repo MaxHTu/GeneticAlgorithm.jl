@@ -8,7 +8,7 @@ module GeneticAlgorithm
 
     export
     # initiation.jl
-    initBinPop, initFloatPop,
+    initPop,
     
     # evaluation.jl
     sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, binarystring,
