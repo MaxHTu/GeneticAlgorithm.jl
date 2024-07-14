@@ -37,15 +37,20 @@ Recombinate two units by exchanging their genes at k random points
 function k_point_crossover(gene1::Vector, gene2::Vector, k::Integer)
     ga = copy(gene1)
     gb = copy(gene2)
-    p = sort(sample(1:length(gene1), k, replace=false))
+    p = sort(sample(1:length(gene1)-1, k, replace=false))
 	for i in range(1,length(p))
 		if i%2 == 0
 			ga[p[i-1]+1:p[i]] = gene2[p[i-1]+1:p[i]]
 			gb[p[i-1]+1:p[i]] = gene1[p[i-1]+1:p[i]]
-		end
+        elseif i == length(p)
+            ga[p[i]+1:end] = gene2[p[i]+1:end]
+            gb[p[i]+1:end] = gene1[p[i]+1:end]
+        end
 	end
     return [ga, gb]
 end
+
+println(k_point_crossover([0,0,0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1,1,1], 3))
 
 """
     uniform_crossover(gene1::Vector, gene2::Vector)
