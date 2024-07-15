@@ -4,7 +4,9 @@ using StatsBase
 global n = 9*9 # size of sudoku
 global exp = [1,2,3,4,5,6,7,8,9] # array of expected values
 
-s = [0 4 8 2 0 0 0 0 1;1 0 0 3 8 4 7 2 6;3 0 0 7 0 1 9 4 8;0 7 2 6 4 5 1 8 0;8 0 0 0 0 2 4 0 0;0 0 0 0 0 0 0 0 7;0 8 4 0 0 0 3 0 0;6 0 0 4 1 0 0 0 2;0 0 3 0 0 0 0 7 4]
+#s = [0 4 8 2 0 0 0 0 1;1 0 0 3 8 4 7 2 6;3 0 0 7 0 1 9 4 8;0 7 2 6 4 5 1 8 0;8 0 0 0 0 2 4 0 0;0 0 0 0 0 0 0 0 7;0 8 4 0 0 0 3 0 0;6 0 0 4 1 0 0 0 2;0 0 3 0 0 0 0 7 4]
+
+s = [0 0 0 8 2 0 0 9 0;0 5 7 6 0 9 0 1 3;0 8 4 0 3 1 0 0 0;0 7 8 0 6 0 4 5 0;0 0 9 1 0 0 0 0 6;5 6 0 3 0 0 9 8 0;8 3 0 4 0 6 0 0 0;0 0 5 0 1 8 0 0 0;1 0 6 7 5 0 2 0 0]
 
 #s = [0 6 0 0 3 0 0 0 1;0 0 1 7 4 5 0 6 3;7 3 0 0 9 0 8 0 0;5 1 3 9 0 0 0 2 0;0 0 0 0 5 7 0 1 8;8 7 0 6 0 3 0 0 0;9 0 6 0 0 0 0 5 0;1 0 0 4 2 9 0 0 7;0 0 0 5 0 1 2 8 0]
 
@@ -12,32 +14,40 @@ s = [0 4 8 2 0 0 0 0 1;1 0 0 3 8 4 7 2 6;3 0 0 7 0 1 9 4 8;0 7 2 6 4 5 1 8 0;8 0
 
 #s = [0 3 0 0 7 0 0 5 0;5 0 0 1 0 6 0 0 9;0 0 1 0 0 0 4 0 0;0 9 0 0 5 0 0 6 0;6 0 0 4 0 2 0 0 7;0 4 0 0 1 0 0 3 0;0 0 2 0 0 0 8 0 0;9 0 0 3 0 5 0 0 2;0 1 0 0 2 0 0 7 0]
 
-
 function solveSudoku(
 	sudoku::Matrix{Int64}
     ;
     popSize::Integer = 500,
-    fitnessFunc::Function = rosenbrock,
+    fitnessFunc::Function = x -> fitness(x, sudoku),
     unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
-    genNum::Integer = 10,
-    crossRate::Real = 0.25,
+    genNum::Integer = 250,
+    crossRate::Real = 0.9,
     mutRate::Real = 0.9,
-    nextGenAmt::Number = 4,
+    nextGenAmt::Number = 2,
     selectionFunc::Function = GeneticAlgorithm.weighted_selection,
     crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
     mutationFunc::Function = GeneticAlgorithm.mutation!
 )
 
-    return geneticAlgorithm(
-		x -> fitness(x, sudoku),
-		popSize,unitValues,unitShape,
-		genNum,selectionFunc,
+    pop = geneticAlgorithm(
+		fitnessFunc,
+		popSize,
+		unitValues,
+		unitShape,
+		genNum,
+		selectionFunc,
 		(x,y) -> crossoverSudoku(x,y),
-		x -> sudokuMutation(x,mutRate),
-		crossRate,mutRate,nextGenAmt,
+		(a,b,c) -> sudokuMutation(a,mutRate),
+		crossRate,
+		mutRate,
+		nextGenAmt,
 		initFunc=x -> generatePopulation(x, sudoku)
 	)
+
+	display(pop[1])
+
+	return pop
 
 end
 
@@ -112,15 +122,7 @@ function crossoverSudoku(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	s2 = copy(s_2)
 	# swap rows
 	r = rand(1:9)
-	#println(r)
-	#display([s1[1:r,:]; s2[r+1:end,:]])
-	#display([s2[1:r,:]; s1[r+1:end,:]])
 	return [s1[1:r,:]; s2[r+1:end,:]], [s2[1:r,:]; s1[r+1:end,:]]
-end
-
-function selectPair(population, fitness_func)
-	#return sample(population, 2, replace=false)
-	return sample(population, Weights([fitness_func(g) for g in population]), replace=false, 2)
 end
 
 function uniformCrossover(s_1::Matrix{Int64}, s_2::Matrix{Int64})
@@ -163,71 +165,3 @@ function sudokuMutation(o::Matrix{Int64}, probability=0.2)
 	end
 	return o
 end
-
-function run()
-	size = 250
-	population = generatePopulation(size, s)
-	fittest = 0
-	generation = 1
-	for i in range(1,100)
-		if fittest == (180)
-			println("found solution")
-			break
-		end
-			
-		population = sort(population, by=fitness, rev=true)
-
-		println(i)
-		println([fitness(g) for g in population][1])
-
-		if fittest != [fitness(g) for g in population][1]
-			fittest = [fitness(g) for g in population][1]
-			generation = i
-		end
-
-		next_generation = population[1:2]
-
-		for j in range(1,trunc(Int, size/2)-1)
-			parents = selectPair(population, fitness)
-			#display(parents[1])
-			#println(fitness(parents[1]))
-			#display(parents[2])
-			#println(fitness(parents[2]))
-			a, b = uniformCrossover(parents[1], parents[2])
-			#a, b = crossover_sudoku(parents[1], parents[2])
-			a = sudokuMutation(a, 0.9+(i-generation)*0.05)
-			b = sudokuMutation(b, 0.9+(i-generation)*0.05)
-			push!(next_generation, a)
-			push!(next_generation, b)
-		end
-
-		population = next_generation
-	end
-	display(population[1])
-	println(checkIfSudokuFinished(population[1]))
-
-end
-
-function checkIfSudokuFinished(genome)
-	for i in range(1,9)
-		println(i)
-		if sort(genome[i,:]) != exp
-			println(false)
-		end
-		if sort(genome[:,i]) != exp
-			println(false)
-		end
-	end
-	# check all cubes, for each completed cube +10
-	for i in range(1,3)
-		for j in range(1,3)
-			println(i,j)
-			if sort(vec(genome[i+(i-1)*2:i+(i-1)*2+2,j+(j-1)*2:j+(j-1)*2+2])) != exp
-				println(false)
-			end
-		end
-	end
-	return true
-end
-
-#println(checkIfSudokuFinished(sud))

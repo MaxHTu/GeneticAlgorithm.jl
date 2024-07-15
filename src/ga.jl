@@ -70,9 +70,9 @@ function geneticAlgorithm(
                 parent1,parent2 = selectionFunc(population, fitness, 2)
                 #call crossover function
                 if rand() < crossRate
-                    child1, child2 = crossoverFunc(parent1, parent2)
+                    child1, child2 = crossoverFunc(copy(parent1), copy(parent2))
                 else
-                    child1, child2 = parent1, parent2
+                    child1, child2 = copy(parent1), copy(parent2)
                 end
                 #mutation step
                 #child1 = mutationFunc(child1)
@@ -237,8 +237,8 @@ function genAlgo(
     unitValues::Union{Type,Vector{Float64}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
-    selection::Function = default_selection,
-    crossover::Function = crossover,
+    selection::Function = (a,b,c) -> default_selection(a,c),
+    crossover::Function = GeneticAlgorithm.single_point_crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
     mutRate::Real = 0.01,
@@ -250,11 +250,11 @@ end
 function genAlgo(
     fitnessFunc::typeof(griewank);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Integer}} = Integer,
+    unitValues::Union{Type,Vector{Integer},AbstractRange{<:Real}} = Int64,
     unitShape::AbstractVector{<:Integer} = [4],
     genNum::Integer = 50,
-    selection::Function = default_selection,
-    crossover::Function = crossover,
+    selection::Function = (a,b,c) -> default_selection(a,c),
+    crossover::Function = GeneticAlgorithm.single_point_crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
     mutRate::Real = 0.01,
@@ -269,8 +269,8 @@ function genAlgo(
     unitValues::Type = Bool,
     unitShape::AbstractVector{<:Integer} = [50],
     genNum::Integer = 50,
-    selection::Function = default_selection,
-    crossover::Function = crossover,
+    selection::Function = (a,b,c) -> default_selection(a,c),
+    crossover::Function = GeneticAlgorithm.single_point_crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
     mutRate::Real = 0.01,
