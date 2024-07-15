@@ -41,18 +41,30 @@ function geneticAlgorithm(
     mutationFunc::Function,
     crossRate::Real,
     mutRate::Real,
-    nextGenAmt::Real
+    nextGenAmt::Real;
+    initFunc::Function = initPop
 )
-    population = initPop(popSize, unitShape, unitValues)
+    if initFunc == initPop
+        
+        population = initFunc(popSize, unitShape, unitValues)
+    else
+        population = initFunc(popSize)
+    end
 
+    # define how many genes go straight to the new population
     nextGenAmt = nextGenAmt<1 ? nextGenAmt*length(population) : nextGenAmt
 
+    println(nextGenAmt)
+
+    # sort population by fitness and calculate fitness
+    population = sort(population, by=fitnessFunc, rev=true)
     fitness = [fitnessFunc(unit) for unit in population]
 
-    population = sort(population, by=fitnessFunc)
-
     for gen in 1:genNum
-        nextGen = population[1:nextGenAmt]
+        nextGen = []
+        for i in range(1,nextGenAmt)
+            push!(nextGen, copy(population[i]))
+        end
 
         for j in range(1, trunc(Int, popSize/2)-nextGenAmt/2)
             #select pair to crossover and mutate
@@ -64,21 +76,24 @@ function geneticAlgorithm(
                 child1, child2 = parent1, parent2
             end
             #mutation step
+            #child1 = mutationFunc(child1)
+            #child2 = mutationFunc(child2)
             child1 = mutationFunc(child1, mutRate, UnitRange{Float64}(-100.0,100.0))
             child2 = mutationFunc(child2, mutRate, UnitRange{Float64}(-100.0,100.0))
             push!(nextGen, child1)
             push!(nextGen, child2)
         end
 
+        nextGen = sort(nextGen, by=fitnessFunc, rev=true)
+
         population = nextGen
-        population = sort(population, by=fitnessFunc)
 
         fitness = [fitnessFunc(unit) for unit in population]
         bestFitness = fitness[1]
 
         println("Generation $gen: Best Fitness = $bestFitness")
     end
-    return sort(population, by=fitnessFunc) 
+    return population 
 end
 
 function solveRosenbrock(
@@ -98,7 +113,7 @@ function solveRosenbrock(
     mutationFunc::Function = GeneticAlgorithm.mutation!
 )
 
-    return geneticAlgorithm(popSize,unitValues,unitShape,x -> GeneticAlgorithm.rosenbrock(x,a=a,b=b),genNum,crossRate,mutRate,nextGenAmt,selectionFunc,crossoverFunc,mutationFunc)
+    return geneticAlgorithm(x -> GeneticAlgorithm.rosenbrock(x,a=a,b=b),popSize,unitValues,unitShape,genNum,selectionFunc,crossoverFunc,mutationFunc,crossRate,mutRate,nextGenAmt)
 
 end
 

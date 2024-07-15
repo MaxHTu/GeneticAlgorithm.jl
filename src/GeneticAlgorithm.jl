@@ -6,12 +6,14 @@ module GeneticAlgorithm
     include("crossover.jl")
     include("mutation.jl")
     include("ga.jl")
+    include("sudoku/sudoku.jl")
 
     export
         # ga.jl
         geneticAlgorithm,
         genAlgo,
         solveRosenbrock,
+        solveSudoku,
 
         # initiation.jl
         initPop,

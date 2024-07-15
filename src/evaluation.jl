@@ -37,13 +37,20 @@ The Rosenbrock function is a non-convex function used as a performance test prob
 """
 function rosenbrock(x::Vector{<:Number}; a::Integer=1, b::Integer=100)
     if length(x) == 2
-        return (a-x[1])^2 + b * (x[2] - x[1]^2)^2
+        v = (a-x[1])^2 + b * (x[2] - x[1]^2)^2
+        if v > 1000
+            return 0.001
+        end
+        return 1000 - v
     end
     s = 0.0
     for i in range(1,length(x)-1)
         s += 100.0 * (x[i+1] - x[i] ^ 2) ^ 2 + (1.0 - x[i]) ^ 2
     end
-    return s
+    if s > 1000
+        return  0.001
+    end
+    return 1000 - s
     #return sum(100.0 * (x[2:end] .- x[1:end-1] .^ 2) .^ 2 .+ (1.0 .- x[1:end-1]) .^ 2)
 end
 

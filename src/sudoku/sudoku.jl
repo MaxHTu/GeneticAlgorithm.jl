@@ -3,63 +3,45 @@ using StatsBase
 # variables
 global n = 9*9 # size of sudoku
 global exp = [1,2,3,4,5,6,7,8,9] # array of expected values
-k = 0 # number of values that need to be filled
-global j = 0 # number of values that are already filled
 
 s = [0 4 8 2 0 0 0 0 1;1 0 0 3 8 4 7 2 6;3 0 0 7 0 1 9 4 8;0 7 2 6 4 5 1 8 0;8 0 0 0 0 2 4 0 0;0 0 0 0 0 0 0 0 7;0 8 4 0 0 0 3 0 0;6 0 0 4 1 0 0 0 2;0 0 3 0 0 0 0 7 4]
+
+#s = [0 6 0 0 3 0 0 0 1;0 0 1 7 4 5 0 6 3;7 3 0 0 9 0 8 0 0;5 1 3 9 0 0 0 2 0;0 0 0 0 5 7 0 1 8;8 7 0 6 0 3 0 0 0;9 0 6 0 0 0 0 5 0;1 0 0 4 2 9 0 0 7;0 0 0 5 0 1 2 8 0]
 
 #s = [0 1 0 0 7 5 9 4 0;4 0 2 0 0 6 0 0 7;0 3 0 9 0 1 0 0 8;6 0 0 5 2 0 4 9 0;0 5 8 0 0 3 0 2 6;1 0 4 0 0 7 0 3 0;0 0 9 8 0 0 0 0 2;7 0 0 1 6 0 3 0 0;2 0 0 0 3 0 6 5 4]
 
 #s = [0 3 0 0 7 0 0 5 0;5 0 0 1 0 6 0 0 9;0 0 1 0 0 0 4 0 0;0 9 0 0 5 0 0 6 0;6 0 0 4 0 2 0 0 7;0 4 0 0 1 0 0 3 0;0 0 2 0 0 0 8 0 0;9 0 0 3 0 5 0 0 2;0 1 0 0 2 0 0 7 0]
 
-function aa(s)
-	k = 0
-	for x in range(1,9)
-		for y in range(1,9)
-			if s[x,y] != 0
-				k += 1
-			end
-		end
-	end
-	println(k)
+
+function solveSudoku(
+	sudoku::Matrix{Int64}
+    ;
+    popSize::Integer = 500,
+    fitnessFunc::Function = rosenbrock,
+    unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}} = Float64,
+    unitShape::AbstractVector{<:Integer} = [2],
+    genNum::Integer = 10,
+    crossRate::Real = 0.25,
+    mutRate::Real = 0.9,
+    nextGenAmt::Number = 4,
+    selectionFunc::Function = GeneticAlgorithm.weighted_selection,
+    crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
+    mutationFunc::Function = GeneticAlgorithm.mutation!
+)
+
+    return geneticAlgorithm(
+		x -> fitness(x, sudoku),
+		popSize,unitValues,unitShape,
+		genNum,selectionFunc,
+		(x,y) -> crossoverSudoku(x,y),
+		x -> sudokuMutation(x,mutRate),
+		crossRate,mutRate,nextGenAmt,
+		initFunc=x -> generatePopulation(x, sudoku)
+	)
+
 end
 
-aa(s)
-
-# functions
-
-function baseSudoku(i)
-    if i == 1
-        r1 = [0,4,8,2,0,0,0,0,1]
-	    r2 = [1,0,0,3,8,4,7,2,6]
-	    r3 = [3,0,0,7,0,1,9,4,8]
-	    r4 = [0,7,2,6,4,5,1,8,0]
-	    r5 = [8,0,0,0,0,2,4,0,0]
-	    r6 = [0,0,0,0,0,0,0,0,7]
-	    r7 = [0,8,4,0,0,0,3,0,0]
-	    r8 = [6,0,0,4,1,0,0,0,2]
-	    r9 = [0,0,3,0,0,0,0,7,4]
-
-        s = stack((r1,r2,r3,r4,r5,r6,r7,r8,r9))'
-
-        return s
-    end
-    r1 = [0,3,0,0,7,0,0,5,0]
-	r2 = [5,0,0,1,0,6,0,0,9]
-	r3 = [0,0,1,0,0,0,4,0,0]
-	r4 = [0,9,0,0,5,0,0,6,0]
-	r5 = [6,0,0,4,0,2,0,0,7]
-	r6 = [0,4,0,0,1,0,0,3,0]
-	r7 = [0,0,2,0,0,0,8,0,0]
-	r8 = [9,0,0,3,0,5,0,0,2]
-	r9 = [0,1,0,0,2,0,0,7,0]
-
-    s = stack((r1,r2,r3,r4,r5,r6,r7,r8,r9))'
-
-    return s
-end
-
-function initialState()
+function initialState(s::Matrix{Int64})
 	g = copy(s)
 	for x in range(1,9)
 		for y in range(1,9)
@@ -77,8 +59,12 @@ function initialState()
 	return g
 end
 
-function fitness(genome)
-	sudoku = copy(s)
+function generatePopulation(n::Int, s::Matrix{Int64})
+	return [initialState(s) for i in range(1, n)]
+end
+
+function fitness(genome::Matrix{Int64}, sudoku::Matrix{Int64})
+	sudoku = s
 	f = 0
 	#for x in range(1,9)
 	#	for y in range(1,9)
@@ -115,10 +101,13 @@ function fitness(genome)
 			end
 		end
 	end
+	if f < 0
+		return 0
+	end
 	return f
 end
 
-function crossover_sudoku(s_1, s_2)
+function crossoverSudoku(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	s1 = copy(s_1)
 	s2 = copy(s_2)
 	# swap rows
@@ -129,7 +118,12 @@ function crossover_sudoku(s_1, s_2)
 	return [s1[1:r,:]; s2[r+1:end,:]], [s2[1:r,:]; s1[r+1:end,:]]
 end
 
-function uniform_crossover(s_1,s_2)
+function selectPair(population, fitness_func)
+	#return sample(population, 2, replace=false)
+	return sample(population, Weights([fitness_func(g) for g in population]), replace=false, 2)
+end
+
+function uniformCrossover(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	s1 = copy(s_1)
 	s2 = copy(s_2)
 	for i in range(1,9)
@@ -141,9 +135,9 @@ function uniform_crossover(s_1,s_2)
 	return s1,s2
 end
 
-function mutation(o, probability=0.2)
+function sudokuMutation(o::Matrix{Int64}, probability=0.2)
 	sudoku = copy(s)
-	# pick random row
+	# pick random row where there are more than 2 values equal to 0 in the original sudoku
 	r = rand(1:9)
 	while sort(sudoku[r,:])[2] != 0
 		r = rand(1:9)
@@ -170,22 +164,13 @@ function mutation(o, probability=0.2)
 	return o
 end
 
-function select_pair(population, fitness_func)
-	#return sample(population, 2, replace=false)
-	return sample(population, Weights([fitness_func(g) for g in population]), 2)
-end
-
-function generate_population(n::Int)
-	return [initialState() for i in range(1, n)]
-end
-
 function run()
 	size = 250
-	population = generate_population(size)
+	population = generatePopulation(size, s)
 	fittest = 0
 	generation = 1
-	for i in range(1,300)
-		if fittest == (2*k + 10*9*3)
+	for i in range(1,100)
+		if fittest == (180)
 			println("found solution")
 			break
 		end
@@ -203,15 +188,15 @@ function run()
 		next_generation = population[1:2]
 
 		for j in range(1,trunc(Int, size/2)-1)
-			parents = select_pair(population, fitness)
+			parents = selectPair(population, fitness)
 			#display(parents[1])
 			#println(fitness(parents[1]))
 			#display(parents[2])
 			#println(fitness(parents[2]))
-			a, b = uniform_crossover(parents[1], parents[2])
+			a, b = uniformCrossover(parents[1], parents[2])
 			#a, b = crossover_sudoku(parents[1], parents[2])
-			a = mutation(a, 0.9+(i-generation)*0.05)
-			b = mutation(b, 0.9+(i-generation)*0.05)
+			a = sudokuMutation(a, 0.9+(i-generation)*0.05)
+			b = sudokuMutation(b, 0.9+(i-generation)*0.05)
 			push!(next_generation, a)
 			push!(next_generation, b)
 		end
@@ -246,4 +231,3 @@ function checkIfSudokuFinished(genome)
 end
 
 #println(checkIfSudokuFinished(sud))
-run()

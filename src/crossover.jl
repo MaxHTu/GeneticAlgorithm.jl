@@ -50,8 +50,6 @@ function k_point_crossover(gene1::Vector, gene2::Vector, k::Integer)
     return [ga, gb]
 end
 
-println(k_point_crossover([0,0,0,0,0,0,0,0,0,0], [1,1,1,1,1,1,1,1,1,1], 3))
-
 """
     uniform_crossover(gene1::Vector, gene2::Vector)
 
