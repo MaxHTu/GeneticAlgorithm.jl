@@ -13,10 +13,16 @@ Recombinate two units by exchanging their genes from a random index onward.
 - Two recombined child units.
 
 """
-function single_point_crossover(gene1::Vector, gene2::Vector)
+function single_point_crossover(gene1::Union{Vector,Matrix}, gene2::Union{Vector,Matrix})
     ga = copy(gene1)
     gb = copy(gene2)
     r = rand(1:length(ga)-1)
+    #MATRIX shape
+	if(gene1 isa Matrix)
+        #r has to be adjusted to matrix shape
+		r = rand(1:size(ga, 2)-1)
+		return [ga[:,1:r] gb[:,r+1:end]], [gb[:,1:r] ga[:,r+1:end]] end
+    #VECTOR shape
     return [ga[1:r]; gb[r+1:end]], [gb[1:r]; ga[r+1:end]]
 end
 
@@ -34,17 +40,28 @@ Recombinate two units by exchanging their genes at k random points
 - Two recombined child units.
 
 """
-function k_point_crossover(gene1::Vector, gene2::Vector, k::Integer)
+function k_point_crossover(gene1::Union{Vector,Matrix}, gene2::Union{Vector,Matrix}, k::Integer)
     ga = copy(gene1)
     gb = copy(gene2)
-    p = sort(sample(1:length(gene1)-1, k, replace=false))
+    p = (gene1 isa Matrix) ? sort(sample(1:size(gene1,2)-1, k, replace=false)) : sort(sample(1:length(gene1)-1, k, replace=false))
+	
 	for i in range(1,length(p))
 		if i%2 == 0
-			ga[p[i-1]+1:p[i]] = gene2[p[i-1]+1:p[i]]
-			gb[p[i-1]+1:p[i]] = gene1[p[i-1]+1:p[i]]
+			if(gene1 isa Matrix)
+				ga[:,p[i-1]+1:p[i]] = gene2[:,p[i-1]+1:p[i]]
+				gb[:,p[i-1]+1:p[i]] = gene1[:,p[i-1]+1:p[i]]
+			else
+				ga[p[i-1]+1:p[i]] = gene2[p[i-1]+1:p[i]]
+				gb[p[i-1]+1:p[i]] = gene1[p[i-1]+1:p[i]]
+			end
         elseif i == length(p)
-            ga[p[i]+1:end] = gene2[p[i]+1:end]
-            gb[p[i]+1:end] = gene1[p[i]+1:end]
+			if(gene1 isa Matrix)
+				ga[:,p[i]+1:end] = gene2[:,p[i]+1:end]
+	            gb[:,p[i]+1:end] = gene1[:,p[i]+1:end]
+			else
+	            ga[p[i]+1:end] = gene2[p[i]+1:end]
+	            gb[p[i]+1:end] = gene1[p[i]+1:end]
+			end
         end
 	end
     return [ga, gb]
@@ -63,14 +80,20 @@ Recombinate two units by iterating a gene and swapping the values with a 50% cha
 - Two recombined child units.
 
 """
-function uniform_crossover(gene1::Vector, gene2::Vector)
+function uniform_crossover(gene1::Union{Vector,Matrix}, gene2::Union{Vector,Matrix})
     ga = copy(gene1)
     gb = copy(gene2)
-    for i in range(1,length(ga))
+	r = (gene1 isa Matrix) ? size(gene1,2) : length(ga)
+    for i in range(1,r)
 		r = rand(0:1)
         if r != 0
+			if(gene1 isa Matrix)
+				gb[:,i] = gene1[:,i]
+				ga[:,i] = gene2[:,i]
+			else
             gb[i] = gene1[i]
             ga[i] = gene2[i]
+			end
 		end
 	end
     return [ga, gb]
