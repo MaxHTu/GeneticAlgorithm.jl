@@ -13,7 +13,7 @@ A Julia package for [genetic algorithms](http://en.wikipedia.org/wiki/Genetic_al
 The package can be installed with the Julia package manager. From the Julia REPL, type ] to enter the Pkg REPL mode and run:
 
 ```
-add https://github.com/MaxHTu/GeneticAlgorithm.jl
+] add https://github.com/MaxHTu/GeneticAlgorithm.jl
 ```
 
 For using the package in a Pluto notebook run:
