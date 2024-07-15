@@ -1,3 +1,10 @@
+function transformRange(values::Vector, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
+    if oldMax == oldMin
+        return values
+    end
+    return (((values .- oldMin) .* (newMax - newMin)) ./ (oldMax - oldMin)) .+ newMin
+end
+
 """
     default_selection(population::Vector, num::Integer)
 
@@ -30,7 +37,7 @@ Select num random genes from population weight by the fitness of the genes
 
 """
 function weighted_selection(population::Vector, fitness_arr::Vector, num::Integer)
-    return sample(population, Weights(fitness_arr), num, replace=false)
+    return sample(population, Weights(transformRange(fitness_arr, findmax(fitness_arr)[1], minimum(fitness_arr), 1, 0.0001)), num, replace=false)
 end
 
 """

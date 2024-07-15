@@ -65,7 +65,7 @@
 #     return gene
 # end
 
-function mutation(
+function mutation!(
     gene::Union{Matrix{<:Real},Matrix{<:Bool}, Vector{<:Real},Vector{Bool}}, 
     mutation_prob::Real, 
     unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}})

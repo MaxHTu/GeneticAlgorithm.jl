@@ -45,7 +45,6 @@ function geneticAlgorithm(
     initFunc::Function = initPop
 )
     if initFunc == initPop
-        
         population = initFunc(popSize, unitShape, unitValues)
     else
         population = initFunc(popSize)
@@ -54,34 +53,39 @@ function geneticAlgorithm(
     # define how many genes go straight to the new population
     nextGenAmt = nextGenAmt<1 ? nextGenAmt*length(population) : nextGenAmt
 
-    println(nextGenAmt)
-
     # sort population by fitness and calculate fitness
     population = sort(population, by=fitnessFunc, rev=true)
     fitness = [fitnessFunc(unit) for unit in population]
 
-    for gen in 1:genNum
-        nextGen = []
-        for i in range(1,nextGenAmt)
-            push!(nextGen, copy(population[i]))
-        end
+    nextGen = typeof(population)(undef, popSize)
 
-        for j in range(1, trunc(Int, popSize/2)-nextGenAmt/2)
-            #select pair to crossover and mutate
-            parent1,parent2 = selectionFunc(population, fitness, 2)
-            #call crossover function
-            if rand() < crossRate
-                child1, child2 = crossoverFunc(parent1, parent2)
+    for gen in 1:genNum
+        i = 1
+        while i <= popSize
+            if i <= nextGenAmt
+                nextGen[i] = copy(population[i])
+                i += 1
             else
-                child1, child2 = parent1, parent2
+                #select pair to crossover and mutate
+                parent1,parent2 = selectionFunc(population, fitness, 2)
+                #call crossover function
+                if rand() < crossRate
+                    child1, child2 = crossoverFunc(parent1, parent2)
+                else
+                    child1, child2 = parent1, parent2
+                end
+                #mutation step
+                #child1 = mutationFunc(child1)
+                #child2 = mutationFunc(child2)
+                child1 = mutationFunc(child1, mutRate, unitValues)
+                child2 = mutationFunc(child2, mutRate, unitValues)
+                nextGen[i] = child1
+                i += 1
+                if i <= popSize
+                    nextGen[i] = child2
+                    i += 1
+                end
             end
-            #mutation step
-            #child1 = mutationFunc(child1)
-            #child2 = mutationFunc(child2)
-            child1 = mutationFunc(child1, mutRate, UnitRange{Float64}(-100.0,100.0))
-            child2 = mutationFunc(child2, mutRate, UnitRange{Float64}(-100.0,100.0))
-            push!(nextGen, child1)
-            push!(nextGen, child2)
         end
 
         nextGen = sort(nextGen, by=fitnessFunc, rev=true)
@@ -150,7 +154,7 @@ TODO: description
 function genAlgo(
     fitnessFunc::Function,
     popSize::Integer,
-    unitValues::Union{Type,Vector{Bool},Vector{Int},Vector{Float64}},
+    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}},
     unitShape::AbstractVector{<:Integer},
     genNum::Integer,
     selection::Function,
@@ -166,7 +170,7 @@ end
 function genAlgo(
     fitnessFunc::Function;
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
+    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = weighted_selection,
@@ -182,11 +186,11 @@ end
 function genAlgo(
     fitnessFunc::typeof(sphere);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
+    unitValues::Union{Type,AbstractVector{<:Real},AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
-    selection::Function = default_selection,
-    crossover::Function = crossover,
+    selection::Function = (a,b,c) -> default_selection(a,c),
+    crossover::Function = single_point_crossover,
     mutation::Function = mutation!,
     crossRate::Real = 0.2,
     mutRate::Real = 0.01,
