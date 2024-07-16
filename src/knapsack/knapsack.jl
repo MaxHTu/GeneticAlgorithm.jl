@@ -106,8 +106,8 @@ function solveKnapsack(
 end
 
 function knapsackFitness(
-	genome,
-	data,
+	genome::Vector{Bool},
+	data::Vector{Tuple{String, Int64, Int64}},
 	weight_limit::Int64
 )
 	weight = 0
