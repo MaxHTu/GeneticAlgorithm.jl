@@ -1,18 +1,44 @@
 using StatsBase
 
 # variables
-global n = 9*9 # size of sudoku
 global exp = [1,2,3,4,5,6,7,8,9] # array of expected values
 
-#s = [0 4 8 2 0 0 0 0 1;1 0 0 3 8 4 7 2 6;3 0 0 7 0 1 9 4 8;0 7 2 6 4 5 1 8 0;8 0 0 0 0 2 4 0 0;0 0 0 0 0 0 0 0 7;0 8 4 0 0 0 3 0 0;6 0 0 4 1 0 0 0 2;0 0 3 0 0 0 0 7 4]
+"""
+solveSudoku(
+	sudoku::Matrix{Int64}
+    ;
+    popSize::Integer,
+    fitnessFunc::Function,
+    unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}},
+    unitShape::AbstractVector{<:Integer},
+    genNum::Integer,
+    crossRate::Real,
+    mutRate::Real,
+    nextGenAmt::Number,
+    selectionFunc::Function,
+    crossoverFunc::Function,
+    mutationFunc::Function,
+	terminationNum::Real
+)
 
-s = [0 0 0 8 2 0 0 9 0;0 5 7 6 0 9 0 1 3;0 8 4 0 3 1 0 0 0;0 7 8 0 6 0 4 5 0;0 0 9 1 0 0 0 0 6;5 6 0 3 0 0 9 8 0;8 3 0 4 0 6 0 0 0;0 0 5 0 1 8 0 0 0;1 0 6 7 5 0 2 0 0]
+Gets the variables for the sudoku solver and passes them to the geneticAlgorithm pipeline
 
-#s = [0 6 0 0 3 0 0 0 1;0 0 1 7 4 5 0 6 3;7 3 0 0 9 0 8 0 0;5 1 3 9 0 0 0 2 0;0 0 0 0 5 7 0 1 8;8 7 0 6 0 3 0 0 0;9 0 6 0 0 0 0 5 0;1 0 0 4 2 9 0 0 7;0 0 0 5 0 1 2 8 0]
+# Arguments
+- `sudoku`: Sudoku to be solved
+- `popSize`: Size of population.
+- `fitnessFunc`: Fitness function.
+- `unitValues`: Type of unit.
+- `unitShape`: Length of a unit vector.
+- `genNum`: Number of generations.
+- `crossRate`: Crossover rate.
+- `mutRate`: Mutation rate.
+- `nextGenAmt`: amount of genes that are automatically copied to new generation
+- `selectionFunc`: Selection function.
+- `crossoverFunc`: Crossover function.
+- `mutationFunc`: Mutation function.
+- `terminationNum`: number of iteration after which the algorithm aborts if there is no change in fitness value from the best gene
 
-#s = [0 1 0 0 7 5 9 4 0;4 0 2 0 0 6 0 0 7;0 3 0 9 0 1 0 0 8;6 0 0 5 2 0 4 9 0;0 5 8 0 0 3 0 2 6;1 0 4 0 0 7 0 3 0;0 0 9 8 0 0 0 0 2;7 0 0 1 6 0 3 0 0;2 0 0 0 3 0 6 5 4]
-
-#s = [0 3 0 0 7 0 0 5 0;5 0 0 1 0 6 0 0 9;0 0 1 0 0 0 4 0 0;0 9 0 0 5 0 0 6 0;6 0 0 4 0 2 0 0 7;0 4 0 0 1 0 0 3 0;0 0 2 0 0 0 8 0 0;9 0 0 3 0 5 0 0 2;0 1 0 0 2 0 0 7 0]
+"""
 
 function solveSudoku(
 	sudoku::Matrix{Int64}
@@ -26,9 +52,10 @@ function solveSudoku(
     mutRate::Real = 0.2,
     nextGenAmt::Number = 2,
     selectionFunc::Function = GeneticAlgorithm.weighted_selection,
-    crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
-    mutationFunc::Function = GeneticAlgorithm.mutation!,
-	terminationNum::Real = 100
+    crossoverFunc::Function = (x,y) -> crossoverSudoku(x,y),
+    mutationFunc::Function = (a,b,c) -> sudokuMutation(a,sudoku,mutRate),
+	terminationNum::Real = 100,
+	initFunc::Function = x -> generatePopulation(x, sudoku)
 )
 
     pop = geneticAlgorithm(
@@ -38,21 +65,34 @@ function solveSudoku(
 		unitShape,
 		genNum,
 		selectionFunc,
-		(x,y) -> crossoverSudoku(x,y),
-		(a,b,c) -> sudokuMutation(a,mutRate),
+		crossoverFunc,
+		mutationFunc,
 		crossRate,
 		mutRate,
 		nextGenAmt,
 		terminationNum,
-		initFunc=x -> generatePopulation(x, sudoku)
+		initFunc=initFunc
 	)
 
+	println("Best Sudoku Solution:")
 	display(pop[1])
 
 	return pop
 
 end
 
+"""
+	initialState(s::Matrix{Int64})
+
+Generate a filled out sudoku (without zeros) from given base sudoku (with zeros). The sudoku is filled so that all the rows are already properly filled. If possible the function tries to also fill the columns and boxes properly.
+
+# Arguments
+- `s`: Given sudoku with zeros
+
+# Returns
+- Sudoku without zeros
+
+"""
 function initialState(s::Matrix{Int64})
 	g = copy(s)
 	for x in range(1,9)
@@ -71,12 +111,37 @@ function initialState(s::Matrix{Int64})
 	return g
 end
 
+"""
+	generatePopulation(n::Int, s::Matrix{Int64})
+
+Generate an array of n filled out sudokus
+
+# Arguments
+- `n`: size of the population
+- `s`: Given sudoku with zeros
+
+# Returns
+- Array of n possible Sudoku solutions without zeros
+
+"""
 function generatePopulation(n::Int, s::Matrix{Int64})
 	return [initialState(s) for i in range(1, n)]
 end
 
+"""
+	fitness(genome::Matrix{Int64}, sudoku::Matrix{Int64})
+
+Evaluates the fitness of a given genome and the base sudoku. Starting from 0 a genome gets 10 points for each correctly filled column (reminder the rows are filled per definition by the initialization function) and each 3x3 box. 2 points are deducted for each value that cannot be in this column or box because of the values in the base sudoku.
+
+# Arguments
+- `genome`: filled out sudoku to be evaluated
+- `s`: Base sudoku
+
+# Returns
+- A fitness value
+
+"""
 function fitness(genome::Matrix{Int64}, sudoku::Matrix{Int64})
-	sudoku = s
 	f = 0
 	for x in range(1,9)
 		for y in range(1,9)
@@ -110,6 +175,20 @@ function fitness(genome::Matrix{Int64}, sudoku::Matrix{Int64})
 	return f
 end
 
+
+"""
+	crossoverSudoku(s_1::Matrix{Int64}, s_2::Matrix{Int64})
+
+Crosses 2 given sudokus row wise at a randomly generated row index.
+
+# Arguments
+- `s_1`: first filled out sudoku
+- `s_2`: second filled out sudoku
+
+# Returns
+- 2 altered sudokus
+
+"""
 function crossoverSudoku(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	s1 = copy(s_1)
 	s2 = copy(s_2)
@@ -118,6 +197,18 @@ function crossoverSudoku(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	return [s1[1:r,:]; s2[r+1:end,:]], [s2[1:r,:]; s1[r+1:end,:]]
 end
 
+"""
+	uniformCrossover(s_1::Matrix{Int64}, s_2::Matrix{Int64})
+
+Crosses 2 given sudokus row wise by generating a random value that indicates if the current row of both sudokus should be changed between them
+
+# Arguments
+- `s_1`: first filled out sudoku
+- `s_2`: second filled out sudoku
+
+# Returns
+- 2 altered sudokus
+"""
 function uniformCrossover(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	s1 = copy(s_1)
 	s2 = copy(s_2)
@@ -130,16 +221,23 @@ function uniformCrossover(s_1::Matrix{Int64}, s_2::Matrix{Int64})
 	return s1,s2
 end
 
-function sudokuMutation(o::Matrix{Int64}, probability=0.2)
-	sudoku = copy(s)
-	# pick random row where there are more than 2 values equal to 0 in the original sudoku
-	r = rand(1:9)
-	while sort(sudoku[r,:])[2] != 0
-		r = rand(1:9)
-	end
-	p = rand()
+"""
+	sudokuMutation(o::Matrix{Int64}, sudoku::Matrix{Int64},  probability=0.2)
+
+Go through all the rows of a sudoku and if a random value is larger than a probability, swap 2 values in that row
+
+# Arguments
+- `o`: sudoku to be mutated
+- `sudoku`: base sudoku
+- `probability`: probability with which we mutate a row
+
+# Returns
+- a mutated sudoku
+"""
+function sudokuMutation(o::Matrix{Int64}, sudoku::Matrix{Int64},  probability::Real=0.2)
 	# if p < probability swap 2 numbers from selected row ()
 	for r in range(1,9)
+		p = rand()
 		if p < probability
 			pot = []
 			for i in range(1,9)
