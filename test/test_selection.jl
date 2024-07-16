@@ -18,8 +18,8 @@ using GeneticAlgorithm
     @test GeneticAlgorithm.weighted_selection([[1.0,2.0],[4.0,8.0],[2.0,4.0],[-2.0,-4.0],[-1.0,8.0]], [75,60,50,10,10], 2) == [[1.0, 2.0], [2.0, 4.0]]
     Random.seed!(25)
 
-    #Random.seed!(1)
-    #@test tournament_selection([[true,true],[false,true],[true,false],[false,false]], [1,2,3,4], 3) == [[true,false]]
-    #Random.seed!(6)
-    #@test tournament_selection([[0.07,0.35,0.73],[0.91,0.19,0.78],[0.67,0.17,0.57],[0.3,0.0,0.57]], [22,12,32,4], 3) == [[0.67,0.17,0.57]]
+    rng = Random.seed!(1)
+    @test tournament_selection([[true,true],[false,true],[true,false],[false,false]], [1,2,3,4], 3, 1) == [[true,false]]
+    rng = Random.seed!(6)
+    @test tournament_selection([[0.07,0.35,0.73],[0.91,0.19,0.78],[0.67,0.17,0.57],[0.3,0.0,0.57]], [22,12,32,4], 3, 1) == [[0.67,0.17,0.57]]
 end
