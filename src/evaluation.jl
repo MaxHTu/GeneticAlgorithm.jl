@@ -30,6 +30,8 @@ The Rosenbrock function is a non-convex function used as a performance test prob
 
 # Arguments
 - `x`: Input vector.
+- `a`: value for the variable a
+- `b`: value for the variable b
 
 # Returns
 - The Rosenbrock function value.
@@ -37,21 +39,13 @@ The Rosenbrock function is a non-convex function used as a performance test prob
 """
 function rosenbrock(x::Vector{<:Number}; a::Integer=1, b::Integer=100)
     if length(x) == 2
-        v = (a-x[1])^2 + b * (x[2] - x[1]^2)^2
-        if v >= 1000
-            return 0.001
-        end
-        return 1000 - v
+        return v = (a-x[1])^2 + b * (x[2] - x[1]^2)^2
     end
     s = 0.0
     for i in range(1,length(x)-1)
         s += 100.0 * (x[i+1] - x[i] ^ 2) ^ 2 + (1.0 - x[i]) ^ 2
     end
-    if s >= 1000
-        return  0.001
-    end
-    return 1000 - s
-    #return sum(100.0 * (x[2:end] .- x[1:end-1] .^ 2) .^ 2 .+ (1.0 .- x[1:end-1]) .^ 2)
+    return s
 end
 
 """
@@ -125,10 +119,7 @@ The Griewank function is a multimodal function used as a performance test proble
 function griewank(x)
     term1 = sum(x.^2) / 4000
     term2 = prod(cos.(x ./ sqrt.(1:length(x))))
-    if abs(term1 - term2 + 1) >= 1000
-        return  0.001
-    end
-    return 1000 - abs(term1 - term2 + 1)
+    return term1 - term2 + 1
 end
 
 """

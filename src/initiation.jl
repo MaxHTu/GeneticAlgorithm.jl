@@ -1,5 +1,3 @@
-include("helper.jl")
-
 """
 initPop(
     popSize::Integer,

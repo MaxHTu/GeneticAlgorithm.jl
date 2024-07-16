@@ -1,5 +1,3 @@
-include("helper.jl")
-
 """
     default_selection(population::Vector, num::Integer)
 
