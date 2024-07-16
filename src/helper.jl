@@ -17,7 +17,7 @@ Transforms values in a vector or matrix to a new range.
 'newMin' The minimum value of the new range
 
 """
-function transformRange(values::Union{Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
+function transformRange(values::Union{Real,Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
     if oldMax == oldMin
         return values
     end

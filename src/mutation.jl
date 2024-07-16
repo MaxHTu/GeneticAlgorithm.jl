@@ -1,69 +1,20 @@
-# """
-#     mutation!(unit::Vector{AbstractFloat}, mutRate::Real)
-#     mutation!(unit::Vector{Bool}, mutRate::Real)
+"""
+    mutation!(
+        gene::Union{AbstractMatrix{<:Real}, AbstractMatrix{<:Bool}, AbstractVector{<:Real}, AbstractVector{Bool}}, 
+        mutation_prob::Real, 
+        unitValues::Union{Type, AbstractVector{Bool}, AbstractVector{<:Real}, AbstractRange{<:Real}}
+    )
 
-# Implements a bit string mutation that flips a single bit in a gene with the probability 1/length(gene)
+Implements mutation that changes a element in a given genes with a given probability mutation_prob. 
 
-# # Arguments
-# - `gene`: Gene to be mutated.
+# Arguments
+- `gene`: Gene to be mutated.
+- `mutation_prob`: Probability with which each single element in a gene is mutated
+- `unitValues`: Type of unit.
 
-# # Returns
-# - A mutated gene.
-# """
-# function mutation!(gene::Vector{Bool})
-#     prob = 1/length(gene)
-#     for i in range(1,length(gene))
-#         if rand() < prob
-#             gene[i] = !gene[i]
-#         end
-#     end
-#     return gene
-# end
-
-# """
-#     mutation!(gene::Vector{Bool}, prob::Float64)
-
-# Implements a bit string mutation that flips a single bit in a gene with the probability prob
-
-# # Arguments
-# - `gene`: Gene to be mutated.
-# - `prob`: Probability with which a single bit is flipped
-
-# # Returns
-# - A mutated gene.
-# """
-# function mutation!(gene::Vector{Bool}, prob::Float64)
-#     for i in range(1,length(gene))
-#         if rand() < prob
-#             gene[i] = !gene[i]
-#         end
-#     end
-#     return gene
-# end
-
-# """
-#     mutation!(gene::Vector{Real}, prob::Real)
-
-# Implements a bit string mutation that selects a random number for a single bit in a gene with the probability prob
-
-# # Arguments
-# - `gene`: Gene to be mutated.
-# - `prob`: Probability with which a single bit is flipped
-
-# # Returns
-# - A mutated gene.
-# """
-# function mutation!(gene::Vector{<:Real}, mutation_prob::Real, range::UnitRange{Float64})
-#     for i in 1:length(gene)
-#         if rand() < mutation_prob
-#             g = gene[i] + rand(range)
-#             if g > range[end] g = g - range[end] end
-#             if g < range[1] g = g + range[end] end
-#             gene[i] = g
-#         end
-#     end 
-#     return gene
-# end
+# Returns
+- A mutated gene.
+"""
 
 function mutation!(
     gene::Union{AbstractMatrix{<:Real}, AbstractMatrix{<:Bool}, AbstractVector{<:Real}, AbstractVector{Bool}}, 
@@ -74,7 +25,11 @@ function mutation!(
     for i in range(1, length(gene))
         if rand() < mutation_prob
             #mutation type switch on gene containing Bools or Reals
-            gene[i] = gene isa Vector{Bool} ? !gene[i] : rand(unitValues)
+            if unitValues isa AbstractRange && unitValues[1] isa AbstractFloat && unitValues[end] isa AbstractFloat
+                gene[i] = transformRange(rand(Float64), 1, 0, unitValues[end], unitValues[1])
+            else
+                gene[i] = gene isa Vector{Bool} ? !gene[i] : rand(unitValues)
+            end
         end
     end
 
