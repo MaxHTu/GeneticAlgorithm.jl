@@ -1,7 +1,8 @@
-function transformRange(values::Vector, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
+function transformRange(values::AbstractVector, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
     if oldMax == oldMin
         return values
     end
+
     return (((values .- oldMin) .* (newMax - newMin)) ./ (oldMax - oldMin)) .+ newMin
 end
 
@@ -18,7 +19,7 @@ Select num random genes from population.
 - num selected genes
 
 """
-function default_selection(population::Vector, num::Integer)
+function default_selection(population::AbstractVector, num::Integer)
 	return sample(population, num, replace=false)
 end
 
@@ -36,7 +37,7 @@ Select num random genes from population weight by the fitness of the genes
 - num selected genes
 
 """
-function weighted_selection(population::Vector, fitness_arr::Vector, num::Integer)
+function weighted_selection(population::AbstractVector, fitness_arr::AbstractVector, num::Integer)
     return sample(population, Weights(transformRange(fitness_arr, findmax(fitness_arr)[1], minimum(fitness_arr), 1, 0.0001)), num, replace=false)
 end
 
@@ -54,14 +55,14 @@ Select num units, where in each iteration the unit with higher fitness out of tw
 - Vector of num genes with the units with better fitness value.
 
 """
-function fitness_selection(population::Vector, fitness::Vector, num::Integer)
-    selection = typeof(population)(undef, num)
-    for i in 1:num
-        unit1, unit2 = rand(1:length(population), 2)
-        selection[i] = (fitness[unit1] > fitness[unit2]) ? population[unit1] : population[unit2]
-    end
-    return selection
-end
+# function fitness_selection(population::AbstractVector, fitness::AbstractVector, num::Integer)
+#     selection = typeof(population)(undef, num)
+#     for i in 1:num
+#         unit1, unit2 = rand(1:length(population), 2)
+#         selection[i] = (fitness[unit1] > fitness[unit2]) ? population[unit1] : population[unit2]
+#     end
+#     return selection
+# end
 
 """
     tournament_selection(population::Vector, fitness::Vector, tournamentSize::Int, num::Integer)
@@ -78,16 +79,19 @@ Select one unit with higher fitness over several tournament rounds with randomly
 - The unit with better fitness value.
 
 """
-function tournament_selection(population::Vector, fitness::Vector, tournamentSize::Int, num::Integer)
+function tournament_selection(population::AbstractVector, fitness::AbstractVector, num::Integer)
     selection = typeof(population)(undef, num)
-    choice = []
+    tournamentSize = rand(1:num÷2)
+    choice = 0
     for i in 1:num
+        bestFit = 1
         for _ in 1:length(population)
             tournament = rand(1:length(population), tournamentSize)
-            bestUnit = argmax(fitness[tournament])
-            choice = population[tournament[bestUnit]]
+            nextFit = argmax(fitness[tournament])
+            bestFit = fitness[bestFit] < fitness[nextFit] ? nextFit : bestFit
+            choice = tournament[bestFit]
         end
-        selection[i] = choice
+        selection[i] = population[choice]
     end
     return selection
 end

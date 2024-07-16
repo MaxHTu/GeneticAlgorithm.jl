@@ -33,7 +33,7 @@ be replaced by a fitter one.
 function geneticAlgorithm(
     fitnessFunc::Function,
     popSize::Integer,
-    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}},
+    unitValues::Union{Type, AbstractVector{Bool} ,AbstractVector{<:Real}, AbstractRange{<:Real}},
     unitShape::AbstractVector{<:Integer},
     genNum::Integer,
     selectionFunc::Function,
@@ -51,7 +51,7 @@ function geneticAlgorithm(
     end
 
     # define how many genes go straight to the new population
-    nextGenAmt = nextGenAmt<1 ? nextGenAmt*length(population) : nextGenAmt
+    nextGenAmt = nextGenAmt < 1 ? nextGenAmt * length(population) : nextGenAmt
 
     # sort population by fitness and calculate fitness
     population = sort(population, by=fitnessFunc, rev=true)
@@ -59,33 +59,43 @@ function geneticAlgorithm(
 
     nextGen = typeof(population)(undef, popSize)
 
+    terminator = 0
+    bestFitness = 0
+
     for gen in 1:genNum
         i = 1
-        while i <= popSize
-            if i <= nextGenAmt
-                nextGen[i] = copy(population[i])
-                i += 1
-            else
-                #select pair to crossover and mutate
-                parent1,parent2 = selectionFunc(population, fitness, 2)
-                #call crossover function
-                if rand() < crossRate
-                    child1, child2 = crossoverFunc(copy(parent1), copy(parent2))
-                else
-                    child1, child2 = copy(parent1), copy(parent2)
-                end
-                #mutation step
-                #child1 = mutationFunc(child1)
-                #child2 = mutationFunc(child2)
-                child1 = mutationFunc(child1, mutRate, unitValues)
-                child2 = mutationFunc(child2, mutRate, unitValues)
-                nextGen[i] = child1
-                i += 1
-                if i <= popSize
-                    nextGen[i] = child2
+
+        if terminator <= 50
+            while i <= popSize
+                if i <= nextGenAmt
+                    nextGen[i] = copy(population[i])
                     i += 1
+                else
+                    #select pair to crossover and mutate
+                    parent1, parent2 = selectionFunc(population, fitness, 2)
+                    #call crossover function
+                    if rand() < crossRate
+                        child1, child2 = crossoverFunc(copy(parent1), copy(parent2))
+                    else
+                        child1, child2 = copy(parent1), copy(parent2)
+                    end
+
+                    #mutation step
+                    #child1 = mutationFunc(child1)
+                    #child2 = mutationFunc(child2)
+                    child1 = mutationFunc(child1, mutRate, unitValues)
+                    child2 = mutationFunc(child2, mutRate, unitValues)
+                    nextGen[i] = child1
+
+                    i += 1
+                    if i <= popSize
+                        nextGen[i] = child2
+                        i += 1
+                    end
                 end
             end
+        else
+            break
         end
 
         nextGen = sort(nextGen, by=fitnessFunc, rev=true)
@@ -93,20 +103,23 @@ function geneticAlgorithm(
         population = nextGen
 
         fitness = [fitnessFunc(unit) for unit in population]
+
+        # check if fitness improves overtime, otherwise terminate
+        terminator = fitness[1] == bestFitness ? terminator + 1 : 0
+
         bestFitness = fitness[1]
 
         println("Generation $gen: Best Fitness = $bestFitness")
     end
+
     return population 
 end
 
-function solveRosenbrock(
-    ;
-    a::Integer=1,
-    b::Integer=100,
+function solveRosenbrock(;
+    a::Integer = 1,
+    b::Integer = 100,
     popSize::Integer = 500,
-    fitnessFunc::Function = rosenbrock,
-    unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}} = Float64,
+    unitValues::Union{Type, AbstractVector{<:AbstractFloat}, AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 10,
     crossRate::Real = 0.25,
@@ -117,7 +130,8 @@ function solveRosenbrock(
     mutationFunc::Function = GeneticAlgorithm.mutation!
 )
 
-    return geneticAlgorithm(x -> GeneticAlgorithm.rosenbrock(x,a=a,b=b),popSize,unitValues,unitShape,genNum,selectionFunc,crossoverFunc,mutationFunc,crossRate,mutRate,nextGenAmt)
+    return geneticAlgorithm(x -> GeneticAlgorithm.rosenbrock(x, a=a, b=b), popSize, unitValues, unitShape,
+                        genNum, selectionFunc, crossoverFunc, mutationFunc, crossRate, mutRate, nextGenAmt)
 
 end
 
@@ -154,7 +168,7 @@ TODO: description
 function genAlgo(
     fitnessFunc::Function,
     popSize::Integer,
-    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}},
+    unitValues::Union{Type, AbstractVector{Bool}, AbstractVector{<:Real}, AbstractRange{<:Real}},
     unitShape::AbstractVector{<:Integer},
     genNum::Integer,
     selection::Function,
@@ -170,7 +184,7 @@ end
 function genAlgo(
     fitnessFunc::Function;
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}} = Float64,
+    unitValues::Union{Type, AbstractVector{Bool}, AbstractVector{<:Real}, AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = weighted_selection,
@@ -186,7 +200,7 @@ end
 function genAlgo(
     fitnessFunc::typeof(sphere);
     popSize::Integer = 50,
-    unitValues::Union{Type,AbstractVector{<:Real},AbstractRange{<:Real}} = Float64,
+    unitValues::Union{Type, AbstractVector{<:Real}, AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = (a,b,c) -> default_selection(a,c),
@@ -202,7 +216,7 @@ end
 function genAlgo(
     fitnessFunc::typeof(quartic);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
+    unitValues::Union{Type, AbstractVector{<:AbstractFloat}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = default_selection,
@@ -218,8 +232,8 @@ end
 function genAlgo(
     fitnessFunc::typeof(schwefel);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
-    unitShape::Vector{Int} = [2],
+    unitValues::Union{Type, AbstractVector{<:AbstractFloat}} = Float64,
+    unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = default_selection,
     crossover::Function = crossover,
@@ -234,7 +248,7 @@ end
 function genAlgo(
     fitnessFunc::typeof(rastrigin);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Float64}} = Float64,
+    unitValues::Union{Type, AbstractVector{<:AbstractFloat}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 50,
     selection::Function = (a,b,c) -> default_selection(a,c),
@@ -250,7 +264,7 @@ end
 function genAlgo(
     fitnessFunc::typeof(griewank);
     popSize::Integer = 50,
-    unitValues::Union{Type,Vector{Integer},AbstractRange{<:Real}} = Int64,
+    unitValues::Union{Type, AbstractVector{Integer}, AbstractRange{<:Real}} = Int64,
     unitShape::AbstractVector{<:Integer} = [4],
     genNum::Integer = 50,
     selection::Function = (a,b,c) -> default_selection(a,c),

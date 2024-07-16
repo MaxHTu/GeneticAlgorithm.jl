@@ -66,15 +66,17 @@
 # end
 
 function mutation!(
-    gene::Union{Matrix{<:Real},Matrix{<:Bool}, Vector{<:Real},Vector{Bool}}, 
+    gene::Union{AbstractMatrix{<:Real}, AbstractMatrix{<:Bool}, AbstractVector{<:Real}, AbstractVector{Bool}}, 
     mutation_prob::Real, 
-    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}})
+    unitValues::Union{Type, AbstractVector{Bool}, AbstractVector{<:Real}, AbstractRange{<:Real}}
+    )
 
-    for i in range(1,length(gene))
+    for i in range(1, length(gene))
         if rand() < mutation_prob
             #mutation type switch on gene containing Bools or Reals
             gene[i] = gene isa Vector{Bool} ? !gene[i] : rand(unitValues)
         end
     end
+
     return gene
 end
