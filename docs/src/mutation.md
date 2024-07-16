@@ -4,4 +4,5 @@ The Mutation function makes random changes to the genes of individuals, mimickin
 ## Mutation Functions
 
 ```@docs
+mutation!
 ```
