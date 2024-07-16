@@ -4,5 +4,4 @@ This is the starting point of a Genetic Algorithm. The Initialisation generates 
 ## Initialisation Functions
 
 ```@docs
-initPop
 ```
