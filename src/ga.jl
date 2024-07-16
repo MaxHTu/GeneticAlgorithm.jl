@@ -70,32 +70,34 @@ function geneticAlgorithm(
     bestFitness = 0
 
     for gen in 1:genNum
-        i = nextGenAmt
-        nextGen = copy(population)
-
-        if terminator <= terminationNum
-            while i <= popSize
+        i = 1
+        if terminator > terminationNum
+            break
+        end
+        while i <= popSize
+            if i <= nextGenAmt
+                nextGen[i] = copy(population[i])
+                i += 1
+            else
                 #select pair to crossover and mutate
-                parent1, parent2 = selectionFunc(population, fitness, 2)
+                parent1,parent2 = selectionFunc(population, fitness, 2)
                 #call crossover function
                 if rand() < crossRate
-                    child1, child2 = crossoverFunc(parent1, parent2)
+                    child1, child2 = crossoverFunc(copy(parent1), copy(parent2))
                 else
-                    child1, child2 = parent1, parent2
+                    child1, child2 = copy(parent1), copy(parent2)
                 end
-
+                #mutation step
+                #child1 = mutationFunc(child1)
+                #child2 = mutationFunc(child2)
                 child1 = mutationFunc(child1, mutRate, unitValues)
                 child2 = mutationFunc(child2, mutRate, unitValues)
                 nextGen[i] = child1
-
                 i += 1
                 if i <= popSize
                     nextGen[i] = child2
-                    i += 1
                 end
             end
-        else
-            break
         end
 
         nextGen = sort(nextGen, by=fitnessFunc, rev=true)
