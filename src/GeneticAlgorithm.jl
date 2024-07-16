@@ -7,6 +7,7 @@ module GeneticAlgorithm
     include("mutation.jl")
     include("ga.jl")
     include("sudoku/sudoku.jl")
+    include("knapsack/knapsack.jl")
     include("helper.jl")
 
     export
@@ -15,6 +16,7 @@ module GeneticAlgorithm
         genAlgo,
         solveRosenbrock,
         solveSudoku,
+        solveKnapsack,
 
         # initiation.jl
         initPop,
