@@ -1,7 +1,5 @@
-using StatsBase
-
 """
-    single_point_crossover(gene1::Vector, gene2::Vector)
+	single_point_crossover(gene1::Union{AbstractVector, AbstractMatrix}, gene2::Union{AbstractVector, AbstractMatrix})
 
 Recombinate two units by exchanging their genes from a random index onward.
 
@@ -30,7 +28,7 @@ function single_point_crossover(gene1::Union{AbstractVector, AbstractMatrix}, ge
 end
 
 """
-    k_point_crossover(gene1::Vector, gene2::Vector, k::Integer)
+	k_point_crossover(gene1::Union{AbstractVector, AbstractMatrix}, gene2::Union{AbstractVector, AbstractMatrix}, k::Integer)
 
 Recombinate two units by exchanging their genes at k random points
 
@@ -71,7 +69,7 @@ function k_point_crossover(gene1::Union{AbstractVector, AbstractMatrix}, gene2::
 end
 
 """
-    uniform_crossover(gene1::Vector, gene2::Vector)
+	uniform_crossover(gene1::Union{AbstractVector, AbstractMatrix}, gene2::Union{AbstractVector, AbstractMatrix})
 
 Recombinate two units by iterating a gene and swapping the values with a 50% chance
 
