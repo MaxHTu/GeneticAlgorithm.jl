@@ -1,9 +1,4 @@
-function transformRange(values::Vector, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
-    if oldMax == oldMin
-        return values
-    end
-    return (((values .- oldMin) .* (newMax - newMin)) ./ (oldMax - oldMin)) .+ newMin
-end
+include("helper.jl")
 
 """
     default_selection(population::Vector, num::Integer)
