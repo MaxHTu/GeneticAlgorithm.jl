@@ -1,21 +1,23 @@
 """
-    mutation!(
-        gene::Union{AbstractMatrix{<:Real}, AbstractMatrix{<:Bool}, AbstractVector{<:Real}, AbstractVector{Bool}}, 
-        mutation_prob::Real, 
-        unitValues::Union{Type, AbstractVector{Bool}, AbstractVector{<:Real}, AbstractRange{<:Real}}
-    )
+    mutation!(gene, mutation_prob, unitValues)
 
-Implements mutation that changes a element in a given genes with a given probability mutation_prob. 
+Mutates the given `gene` based on the `mutation_prob` and `unitValues`.
 
 # Arguments
-- `gene`: Gene to be mutated.
-- `mutation_prob`: Probability with which each single element in a gene is mutated
-- `unitValues`: Type of unit.
+- `gene`: A matrix or vector containing real numbers or boolean values.
+- `mutation_prob`: The probability of mutation for each element in the `gene`.
+- `unitValues`: A type or vector representing the range of values for mutation.
+
+# Details
+- For each element in the `gene`, if a random number is less than `mutation_prob`, the element is mutated.
+- If `unitValues` is an abstract range of floating-point numbers, the mutated element is transformed to fit within the range.
+- If `unitValues` is a vector of boolean values, the mutated element is negated.
+- Otherwise, the mutated element is replaced with a random value from `unitValues`.
 
 # Returns
-- A mutated gene.
-"""
+The mutated `gene`.
 
+"""
 function mutation!(
     gene::Union{AbstractMatrix{<:Real}, AbstractMatrix{<:Bool}, AbstractVector{<:Real}, AbstractVector{Bool}}, 
     mutation_prob::Real, 

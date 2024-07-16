@@ -1,14 +1,14 @@
 """
     default_selection(population::Union{AbstractVector,AbstractMatrix}, num::Integer)
 
-Select num random genes from population.
+Selects a specified number of individuals from a population.
 
 # Arguments
-- `population`: Population vector.
-- `num`: Amount of genes to select
+- `population`: The population from which individuals will be selected.
+- `num`: The number of individuals to select.
 
 # Returns
-- num selected genes
+An array of selected individuals.
 
 """
 function default_selection(population::Union{AbstractVector, AbstractMatrix}, num::Integer)
