@@ -4,7 +4,7 @@ FOR GENETIC ALGORITHMS
 """
 
 """
-    sphere(x)
+    sphere(x::Vector{<:Number})
 
 Compute the sphere function value for a given input vector `x`.
 
@@ -22,7 +22,7 @@ function sphere(x::Vector{<:Number})
 end
 
 """
-    rosenbrock(x)
+    rosenbrock(x::Vector{<:Number}; a::Integer, b::Integer)
 
 Compute the Rosenbrock function value for a given input vector `x`.
 
@@ -50,7 +50,7 @@ function rosenbrock(x::Vector{<:Number}; a::Integer = 1, b::Integer = 100)
 end
 
 """
-    quartic(x)
+    quartic(x::AbstractVector{<:Number})
 
 Compute the quartic function value for a given input vector `x`.
 
@@ -68,7 +68,7 @@ function quartic(x::AbstractVector{<:Number})
 end
 
 """
-    schwefel(x)
+    schwefel(x::AbstractVector{<:Number})
 
 Compute the Schwefel function value for a given input vector `x`.
 
@@ -86,7 +86,7 @@ function schwefel(x::AbstractVector{<:Number})
 end
 
 """
-    rastrigin(x)
+    rastrigin(x::AbstractVector{<:Number})
 
 Compute the Rastrigin function value for a given input vector `x`.
 
@@ -104,7 +104,7 @@ function rastrigin(x::AbstractVector{<:Number})
 end
 
 """
-    griewank(x)
+    griewank(x::AbstractVector{<:Number})
 
 Compute the Griewank function value for a given input vector `x`.
 
@@ -124,7 +124,7 @@ function griewank(x::AbstractVector{<:Number})
 end
 
 """
-    binarystring(x)
+    binarystring(x::AbstractVector{Bool})
 
 Compute the fitness of a binary string unit.
 

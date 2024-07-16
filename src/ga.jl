@@ -67,6 +67,7 @@ function geneticAlgorithm(
     nextGen = typeof(population)(undef, popSize)
 
     terminator = 0
+    mutRateIter = 0
     bestFitness = 0
 
     for gen in 1:genNum
@@ -95,7 +96,13 @@ function geneticAlgorithm(
                 end
             end
         else
-            break
+            if mutRateIter < 3
+                mutRate *= 2
+                terminator = 0
+            else
+                break
+            end
+            
         end
 
         nextGen = sort(nextGen, by=fitnessFunc, rev=true)
