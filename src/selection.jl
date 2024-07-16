@@ -11,7 +11,7 @@ Select num random genes from population.
 - num selected genes
 
 """
-function default_selection(population::AbstractVector, num::Integer)
+function default_selection(population::Union{AbstractVector,AbstractMatrix}, num::Integer)
 	return sample(population, num, replace=false)
 end
 
