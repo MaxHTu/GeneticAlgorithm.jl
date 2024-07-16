@@ -1,17 +1,19 @@
 """
-initPop(
-    popSize::Integer,
-    unitShape::AbstractVector{<:Integer},
-    unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}}
-)
+    initPop(popSize::Integer, unitShape::AbstractVector{<:Integer}, unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}})
 
-Generate an initial Population with popSize genes. The genes have the shape unitShape and contain values of a given type or between a given range (the resulting values are of the type of the range borders).
+This function initializes a population of individuals for a genetic algorithm.
 
-# Arguments
-'popSize' Determines how many genomes in one population, e.g. 10
-'unitShape' Determines the dimension of the genome, e.g. [1] = Skalar, [3] = xyz-Vektor, [3,3] = 3x3 Matrix
-'unitValues' Determines the possible genome states, either as type (e.g. Bool), Vector of possible elements or as Range
+**Arguments**
+- `popSize::Integer`: The number of individuals in the population.
+- `unitShape::AbstractVector{<:Integer}`: The shape of each individual in the population.
+- `unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}}`: The range of values for each element in the individual.
 
+**Returns**
+- `pop::Vector{<:AbstractArray}`: The initialized population.
+
+**Details**
+- If `unitShape` is a scalar or a vector, the function generates random individuals with values from `unitValues`.
+- If `unitShape` is a matrix, the function generates random individuals with values from `unitValues`.
 """
 
 function initPop(popSize::Integer, unitShape::AbstractVector{<:Integer}, unitValues::Union{Type,Vector{Bool},AbstractVector{<:Real},AbstractRange{<:Real}})

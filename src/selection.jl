@@ -1,16 +1,3 @@
-"""
-    default_selection(population::Vector, num::Integer)
-
-Select num random genes from population.
-
-# Arguments
-- `population`: Population vector.
-- `num`: Amount of genes to select
-
-# Returns
-- num selected genes
-
-"""
 function default_selection(population::Union{AbstractVector,AbstractMatrix}, num::Integer)
 	return sample(population, num, replace=false)
 end
