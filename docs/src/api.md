@@ -2,5 +2,5 @@
 
 ```@docs
 solveRosenbrock
-GeneticAlgorithm.transformRange
+transformRange
 ```
