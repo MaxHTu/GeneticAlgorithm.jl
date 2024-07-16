@@ -1,5 +1,5 @@
 """
-    transform_Range(values, oldMax, oldMin, newMax, newMin)
+    transformRange(values, oldMax, oldMin, newMax, newMin)
 
 Transforms the range of values from the old range [oldMin, oldMax] to the new range [newMin, newMax].
 
@@ -15,7 +15,7 @@ The transformed values with the same shape as the input values.
 
 """
 
-function transform_Range(values::Union{Real,Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
+function transformRange(values::Union{Real,Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
     if oldMax == oldMin
         return values
     end
