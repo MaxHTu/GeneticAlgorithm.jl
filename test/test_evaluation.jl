@@ -11,9 +11,16 @@ using Random
     end
 
     @testset "rosenbrock" begin
-        @test rosenbrock([1.0, 1.0]) == 0.0
-        @test rosenbrock([0.0, 0.0]) == 1.0
-        @test rosenbrock([1.0, 2.0]) > 0.0
+        @test rosenbrock([1, 1]) == 0
+        @test rosenbrock([1.2, 1.2]) ≈ 5.8 atol=1e-1
+    
+        @test rosenbrock([1, 1, 1]) == 0
+        @test rosenbrock([1.2, 1.2, 1.2]) ≈ (5.8 + 5.8) atol=1e-1
+        
+        @test rosenbrock([1, 1], a=2, b=50) == 1
+        @test rosenbrock([2, 2], a=1, b=50) == 201
+    
+        @test rosenbrock([1]) == 0.0
     end
 
     @testset "quartic" begin
