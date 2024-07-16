@@ -17,7 +17,7 @@ The sphere function is defined as the sum of the squares of each element in `x`.
 - The sphere function value.
 
 """
-function sphere(x)
+function sphere(x::Vector{<:Number})
     return sum(x .^ 2)
 end
 
@@ -30,13 +30,23 @@ The Rosenbrock function is a non-convex function used as a performance test prob
 
 # Arguments
 - `x`: Input vector.
+- `a`: value for the variable a
+- `b`: value for the variable b
 
 # Returns
 - The Rosenbrock function value.
 
 """
-function rosenbrock(x)
-    return sum(100.0 * (x[2:end] .- x[1:end-1] .^ 2) .^ 2 .+ (1.0 .- x[1:end-1]) .^ 2)
+function rosenbrock(x::Vector{<:Number}; a::Integer = 1, b::Integer = 100)
+    if length(x) == 2
+        return v = (a-x[1])^2 + b * (x[2] - x[1]^2)^2
+    end
+
+    s = 0.0
+    for i in range(1, length(x) - 1)
+        s += 100.0 * (x[i + 1] - x[i] ^ 2) ^ 2 + (1.0 - x[i])^2
+    end
+    return s
 end
 
 """
@@ -53,7 +63,7 @@ The quartic function is defined as the sum of the product of each element in `x`
 - The quartic function value.
 
 """
-function quartic(x)
+function quartic(x::AbstractVector{<:Number})
     return sum((1:length(x)) .* (x .^ 4)) + randn()
 end
 
@@ -71,7 +81,7 @@ The Schwefel function is a multimodal function used as a performance test proble
 - The Schwefel function value.
 
 """
-function schwefel(x)
+function schwefel(x::AbstractVector{<:Number})
     return 418.9829 * length(x) - sum(x .* sin.(sqrt.(abs.(x))))
 end
 
@@ -89,7 +99,7 @@ The Rastrigin function is a multimodal function used as a performance test probl
 - The Rastrigin function value.
 
 """
-function rastrigin(x)
+function rastrigin(x::AbstractVector{<:Number})
     return 10 * length(x) + sum(x.^2 .- 10 .* cos.(2 * π .* x))
 end
 
@@ -107,7 +117,7 @@ The Griewank function is a multimodal function used as a performance test proble
 - The Griewank function value.
 
 """
-function griewank(x)
+function griewank(x::AbstractVector{<:Number})
     term1 = sum(x.^2) / 4000
     term2 = prod(cos.(x ./ sqrt.(1:length(x))))
     return term1 - term2 + 1
@@ -125,8 +135,6 @@ Compute the fitness of a binary string unit.
 - The digit sum of input vector.
 
 """
-function binarystring(x)
+function binarystring(x::AbstractVector)
     return sum(x)
 end
-
-export sphere, rosenbrock, quartic, schwefel, rastrigin, griewank, binarystring
