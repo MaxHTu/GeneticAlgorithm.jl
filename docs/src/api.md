@@ -2,5 +2,4 @@
 
 ```@docs
 solveRosenbrock
-transformRange
 ```
