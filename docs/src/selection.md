@@ -4,7 +4,7 @@ The Selection process chooses individuals from the population to be the parents 
 ## Selection Functions
 
 ```@docs
-GeneticAlgorithm.default_selection
+default_selection
 tournament_selection
-GeneticAlgorithm.weighted_selection
+weighted_selection
 ```
