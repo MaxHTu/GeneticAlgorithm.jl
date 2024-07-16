@@ -72,18 +72,17 @@ Select one unit with higher fitness over several tournament rounds with randomly
 
 """
 function tournament_selection(population::AbstractVector, fitness::AbstractVector, num::Integer)
-    selection = typeof(population)(undef, num)
-    tournamentSize = rand(1:num÷2)
-    choice = 0
+    selection = Vector{eltype(population)}(undef, num)
+    tournamentSize = max(1, length(population) ÷ 2)
     for i in 1:num
-        bestFit = 1
-        for _ in 1:length(population)
-            tournament = rand(1:length(population), tournamentSize)
-            nextFit = argmax(fitness[tournament])
-            bestFit = fitness[bestFit] < fitness[nextFit] ? nextFit : bestFit
-            choice = tournament[bestFit]
+        bestFit = rand(1:length(population))
+        for _ in 1:tournamentSize
+            competitor = rand(1:length(population))
+            if fitness[competitor] > fitness[bestFit]
+                bestFit = competitor
+            end
         end
-        selection[i] = population[choice]
+        selection[i] = population[bestFit]
     end
     return selection
 end
