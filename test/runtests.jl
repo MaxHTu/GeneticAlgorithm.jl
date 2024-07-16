@@ -8,5 +8,6 @@ using Random
     include("test_selection.jl")
     include("test_crossover.jl")
     include("test_mutation.jl")
-    #include("test_genalgo.jl")
+    include("test_sudoku.jl")
+    include("test_genalgo.jl")
 end
