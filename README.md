@@ -26,7 +26,7 @@ using GeneticAlgorithm
 
 ## Usage example:
 
-To show how this package can be used, we use the two classical test problem for optimization. We choose the [Rosenbrock function](https://en.wikipedia.org/wiki/Rosenbrock_function) and [Sphere function](https://www.sfu.ca/~ssurjano/spheref.html). To run the examples run the following Pluto notebook: https://github.com/MaxHTu/GeneticAlgorithm.jl/notebooks/examples.jl
+To show how this package can be used, we use the two classical test problem for optimization. We choose the [Rosenbrock function](https://en.wikipedia.org/wiki/Rosenbrock_function) and [Sphere function](https://www.sfu.ca/~ssurjano/spheref.html). To run the examples run the following Pluto notebook: [https://github.com/MaxHTu/GeneticAlgorithm.jl/notebooks/examples.jl](https://github.com/MaxHTu/GeneticAlgorithm.jl/blob/main/notebooks/examples.jl)
 
 function collection:
 binarystring: 
