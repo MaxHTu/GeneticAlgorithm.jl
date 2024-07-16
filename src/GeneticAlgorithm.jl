@@ -7,6 +7,7 @@ module GeneticAlgorithm
     include("mutation.jl")
     include("ga.jl")
     include("sudoku/sudoku.jl")
+    include("helper.jl")
 
     export
         # ga.jl

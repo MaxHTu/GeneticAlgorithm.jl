@@ -119,19 +119,25 @@ function solveRosenbrock(;
     a::Integer = 1,
     b::Integer = 100,
     popSize::Integer = 500,
-    unitValues::Union{Type, AbstractVector{<:AbstractFloat}, AbstractRange{<:Real}} = Float64,
+    fitnessFunc::Function = rosenbrock,
+    unitValues::Union{Type, AbstractVector{<:AbstractFloat}, AbstractRange{<:Real}} = -1000.0:1000.0,
     unitShape::AbstractVector{<:Integer} = [2],
-    genNum::Integer = 10,
+    genNum::Integer = 100,
     crossRate::Real = 0.25,
-    mutRate::Real = 0.5,
+    mutRate::Real = 0.25,
     nextGenAmt::Number = 4,
     selectionFunc::Function = GeneticAlgorithm.weighted_selection,
     crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
     mutationFunc::Function = GeneticAlgorithm.mutation!
 )
-
-    return geneticAlgorithm(x -> GeneticAlgorithm.rosenbrock(x, a=a, b=b), popSize, unitValues, unitShape,
-                        genNum, selectionFunc, crossoverFunc, mutationFunc, crossRate, mutRate, nextGenAmt)
+    function r(x)
+        v = GeneticAlgorithm.rosenbrock(x,a=a,b=b)
+        if v >= 1000
+            return 0.0001
+        end
+        return 1000 - v
+    end
+    return geneticAlgorithm(r, popSize, unitValues, unitShape, genNum, selectionFunc, crossoverFunc, mutationFunc, crossRate, mutRate, nextGenAmt)
 
 end
 
@@ -274,6 +280,14 @@ function genAlgo(
     mutRate::Real = 0.01,
     nextGenAmt::Real = 2
 )
+
+    function g(x)
+        v = abs(fitnessFunc(x))
+        if v >= 1000
+            return 0.0001
+        end
+        return 1000 - v
+    end
     return geneticAlgorithm(fitnessFunc, popSize, unitValues, unitShape, genNum, selection, crossover, mutation, crossRate, mutRate, nextGenAmt)
 end
 

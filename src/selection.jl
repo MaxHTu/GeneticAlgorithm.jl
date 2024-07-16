@@ -1,11 +1,3 @@
-function transformRange(values::AbstractVector, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
-    if oldMax == oldMin
-        return values
-    end
-
-    return (((values .- oldMin) .* (newMax - newMin)) ./ (oldMax - oldMin)) .+ newMin
-end
-
 """
     default_selection(population::Vector, num::Integer)
 
