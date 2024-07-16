@@ -1,23 +1,21 @@
 """
-transformRange(
-    values::Union{Vector,Matrix},
-    oldMax::Real,
-    oldMin::Real,
-    newMax::Real,
-    newMin::Real
-)
+    transform_Range(values, oldMax, oldMin, newMax, newMin)
 
-Transforms values in a vector or matrix to a new range.
+Transforms the range of values from the old range [oldMin, oldMax] to the new range [newMin, newMax].
 
 # Arguments
-'values' Values to be transformed
-'oldMax' The maximum value of the old range
-'oldMin' The minimum value of the old range
-'newMax' The maximum value of the new range
-'newMin' The minimum value of the new range
+- `values`: The values to be transformed. Can be a scalar, vector, or matrix.
+- `oldMax`: The maximum value of the old range.
+- `oldMin`: The minimum value of the old range.
+- `newMax`: The maximum value of the new range.
+- `newMin`: The minimum value of the new range.
+
+# Returns
+The transformed values with the same shape as the input values.
 
 """
-function transformRange(values::Union{Real,Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
+
+function transform_Range(values::Union{Real,Vector,Matrix}, oldMax::Real, oldMin::Real, newMax::Real, newMin::Real)
     if oldMax == oldMin
         return values
     end

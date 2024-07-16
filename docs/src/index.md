@@ -40,7 +40,9 @@ using GeneticAlgorithm
 genAlgo(50, true, 2, rosenbrock, 50, 0.25, 0.1)
 ```
 
-```@index
+```@docs
+geneticAlgorithm
+genAlgo
 ```
 
 ```@autodocs
