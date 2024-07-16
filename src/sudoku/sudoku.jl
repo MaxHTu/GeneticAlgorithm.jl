@@ -17,17 +17,18 @@ s = [0 0 0 8 2 0 0 9 0;0 5 7 6 0 9 0 1 3;0 8 4 0 3 1 0 0 0;0 7 8 0 6 0 4 5 0;0 0
 function solveSudoku(
 	sudoku::Matrix{Int64}
     ;
-    popSize::Integer = 500,
+    popSize::Integer = 1000,
     fitnessFunc::Function = x -> fitness(x, sudoku),
     unitValues::Union{Type,AbstractVector{Float64},AbstractRange{<:Real}} = Float64,
     unitShape::AbstractVector{<:Integer} = [2],
     genNum::Integer = 250,
-    crossRate::Real = 0.9,
-    mutRate::Real = 0.9,
+    crossRate::Real = 1,
+    mutRate::Real = 0.2,
     nextGenAmt::Number = 2,
     selectionFunc::Function = GeneticAlgorithm.weighted_selection,
     crossoverFunc::Function = GeneticAlgorithm.single_point_crossover,
-    mutationFunc::Function = GeneticAlgorithm.mutation!
+    mutationFunc::Function = GeneticAlgorithm.mutation!,
+	terminationNum::Real = 100
 )
 
     pop = geneticAlgorithm(
@@ -42,6 +43,7 @@ function solveSudoku(
 		crossRate,
 		mutRate,
 		nextGenAmt,
+		terminationNum,
 		initFunc=x -> generatePopulation(x, sudoku)
 	)
 
@@ -76,15 +78,6 @@ end
 function fitness(genome::Matrix{Int64}, sudoku::Matrix{Int64})
 	sudoku = s
 	f = 0
-	#for x in range(1,9)
-	#	for y in range(1,9)
-	#		if genome[x,y] != 0 && sudoku[x,y] == 0
-	#			if !(genome[x,y] in sudoku[x,:]) && !(genome[x,y] in sudoku[:,y]) && !(genome[x,y] in sudoku[x-(x-1)%3:x-(x-1)%3+2,y-(y-1)%3:y-(y-1)%3+2])
-	#				f = f + 2
-	#			end
-	#		end
-	#	end
-	#end
 	for x in range(1,9)
 		for y in range(1,9)
 			if genome[x,y] != 0 && sudoku[x,y] == 0
@@ -146,22 +139,24 @@ function sudokuMutation(o::Matrix{Int64}, probability=0.2)
 	end
 	p = rand()
 	# if p < probability swap 2 numbers from selected row ()
-	if p < probability
-		pot = []
-		for i in range(1,9)
-			if sudoku[r,i] == 0
-				push!(pot,i)
+	for r in range(1,9)
+		if p < probability
+			pot = []
+			for i in range(1,9)
+				if sudoku[r,i] == 0
+					push!(pot,i)
+				end
 			end
-		end
-		i1 = rand(eachindex(pot))
-		c1 = pot[i1]
-		deleteat!(pot, i1)
-		i2 = rand(eachindex(pot))
-		c2 = pot[i2]
+			i1 = rand(eachindex(pot))
+			c1 = pot[i1]
+			deleteat!(pot, i1)
+			i2 = rand(eachindex(pot))
+			c2 = pot[i2]
 
-		v1 = o[r,c1]
-		o[r,c1] = o[r,c2]
-		o[r,c2] = v1
+			v1 = o[r,c1]
+			o[r,c1] = o[r,c2]
+			o[r,c2] = v1
+		end
 	end
 	return o
 end
