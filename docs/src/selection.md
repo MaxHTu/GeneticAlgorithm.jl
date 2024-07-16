@@ -4,5 +4,7 @@ The Selection process chooses individuals from the population to be the parents 
 ## Selection Functions
 
 ```@docs
+default_selection
 tournament_selection
+weighted_selection
 ```
