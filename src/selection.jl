@@ -1,3 +1,16 @@
+"""
+    default_selection(population::Union{AbstractVector,AbstractMatrix}, num::Integer)
+
+Selects a specified number of individuals from a population.
+
+# Arguments
+- `population`: The population from which individuals will be selected.
+- `num`: The number of individuals to select.
+
+# Returns
+An array of selected individuals.
+
+"""
 function default_selection(population::Union{AbstractVector,AbstractMatrix}, num::Integer)
 	return sample(population, num, replace=false)
 end
